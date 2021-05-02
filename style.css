@@ -1,0 +1,39 @@
+html,body{
+    height: 100%;
+}
+body{
+    background-image: url("./assets/pexels-miriam-espacio-110854.jpg");
+    background-size: cover;
+}
+.planet{
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px dotted #ccc;
+}
+.planet.water{
+    background: #7f7fdc;
+}
+.planet.iron{
+    background: red;
+}
+.planet.o3{
+    background: #bd49db;
+}
+.ship{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: all linear 300ms;
+}
+.station{
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    background-image: url("./assets/RD1.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}

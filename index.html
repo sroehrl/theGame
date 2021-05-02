@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/theme/ayu-dark.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="bg-black text-white">
+    <div class="grid-9-3 h-75p">
+        <section class="position-relative" id="game">
+            <button class="w-25p place-x-center" id="startGame">start</button>
+        </section>
+        <div class="p-2 bg-black-50">
+            <article id="control"></article>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="grid-4-8">
+            <h3>Control</h3>
+            <div>
+                <button class="cursor-pointer p-x-3 p-y-1 b-1 b-rounded-2 b-primary bg-transparent text-white hover:bg-primary " id="exec">execute</button>
+            </div>
+        </div>
+        <div class="grid-8-4" style="min-height: 100vh">
+            <textarea class="b-rounded w-100p h-100p" id="code" rows="10"></textarea>
+            <div class="bg-black b-l-1 b-white p-2" id="logger" style="overflow-y: auto"></div>
+        </div>
+
+    </div>
+
+    <script type="module" src="Game.js"></script>
+    <script>
+        var logger = function (print){
+            let text = print.toString();
+            if(text === '[object Object]'){
+                text = "{\n";
+                Object.keys(print).forEach(key=> {
+                    text += key + ': ' + print[key].toString() + ",\n"
+                })
+                text += '}';
+            }
+            let ele = document.createElement('p');
+            ele.innerText = text;
+            document.getElementById('logger').appendChild(ele)
+        }
+        window.onerror = function(message, url, linenumber) {
+            logger("JavaScript error: " + message + " on line " +
+                linenumber + " for " + url);
+        }
+        let userCode = "logger('Adventure started!')\n" +
+            "starShips[0].setDestination(spaceStation.coords[0],spaceStation.coords[1]);\n" +
+            "starShips[0].fly()\n" +
+            "starShips[0].on('arrived', ship => {\n" +
+            "  logger(\"arrived at station: refueling\")\n" +
+            "  unloadAndRefuel(ship, toWaterPlanet);\n" +
+            "  \n" +
+            "})\n" +
+            "\n" +
+            "function unloadAndRefuel(ship, cb){\n" +
+            "\tship.refuel()\n" +
+            "      .then(()=>{\n" +
+            "      \tship.unload(spaceStation)\n" +
+            "          .then(()=>cb(ship))\n" +
+            "      \t  .catch(()=>cb(ship))\n" +
+            "    })\n" +
+            "}\n" +
+            "\n" +
+            "function toWaterPlanet(ship){\n" +
+            "  ship.setDestination(planets[0].coords[0], planets[0].coords[1])\n" +
+            "  ship.on(\"arrived\", ship=>extractWater(ship,planets[0]))  \n" +
+            "  ship.fly();\n" +
+            "}\n" +
+            "\n" +
+            "function extractWater(ship, planet){\n" +
+            "  ship.extract(planet).then(()=>logger('so far, so good? Click execute again!'))\n" +
+            "}";
+        const codeMirror = new CodeMirror.fromTextArea(document.getElementById('code'),{
+            mode:'javascript',
+            theme: "ayu-dark"
+        })
+        codeMirror.setOption('value',userCode)
+        codeMirror.setSize(null, 800)
+        codeMirror.on("change",(instance,change)=>{
+            userCode = instance.getValue();
+        })
+        const exec = document.getElementById('exec');
+        exec.addEventListener('click', ev=>{
+            const existing = document.getElementById('userJs');
+            if(existing){
+                existing.parentNode.removeChild(existing);
+            }
+            const nSr = document.createElement('script');
+            nSr.id = 'userJs';
+            nSr.type = 'module';
+            nSr.text = `
+            import {starShips, planets, spaceStation} from './Game.js';
+
+            ${userCode}
+            `;
+            document.body.appendChild(nSr)
+        })
+
+    </script>
+
+</body>
+</html>
