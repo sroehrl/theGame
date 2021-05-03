@@ -39,8 +39,21 @@
         </div>
 
     </div>
-
+    <div id="audios"></div>
+    <script>
+        const global = {
+            soundFx: false,
+            music: false
+        }
+    </script>
     <script type="module" src="Game.js"></script>
+    <script type="module" >
+        import AudioFx from "./AudioFx.js";
+        const music = new AudioFx();
+        document.body.addEventListener('click', ev => setTimeout(()=>{
+            music.playMusic()
+        },250))
+    </script>
     <script>
         var logger = function (print){
             let text = print.toString();
@@ -59,32 +72,47 @@
             logger("JavaScript error: " + message + " on line " +
                 linenumber + " for " + url);
         }
-        let userCode = localStorage.myCode || "logger('Adventure started!')\n" +
-            "starShips[0].setDestination(...spaceStation.getCoords());\n" +
-            "starShips[0].fly()\n" +
-            "starShips[0].on('arrived', ship => {\n" +
-            "  logger(\"arrived at station: refueling\")\n" +
-            "  unloadAndRefuel(ship, toWaterPlanet);\n" +
+        let userCode = localStorage.myCode || "global.music = false;\n" +
+            "global.soundFx = true;\n" +
+            "\n" +
+            "const myShip = starShips[0];\n" +
+            "\n" +
+            "\n" +
+            "myShip.on(\"isMining\", ()=> logger(\"Ship tries to mine planet\"))\n" +
+            "myShip.on('arrived', ship => {\n" +
+            "  logger(\"Arrived at station: refueling\")\n" +
+            "  myShip.refuel();\n" +
             "  \n" +
             "})\n" +
             "\n" +
-            "function unloadAndRefuel(ship, cb){\n" +
-            "\tship.refuel()\n" +
-            "      .then(()=>{\n" +
-            "      \tship.unload(spaceStation)\n" +
-            "          .then(()=>cb(ship))\n" +
-            "      \t  .catch(()=>cb(ship))\n" +
+            "spaceStation.on(\"cargoAccepted\", ()=> logger(\"New resources at station!\"));\n" +
+            "spaceStation.on(\"refueledShip\", ()=> {\n" +
+            "  logger(\"A ship was refueled. Monitor the station's fuel tank!\")\n" +
+            "  // mineO3()\n" +
+            "});\n" +
+            "\n" +
+            "/*\n" +
+            "*  This should get us home...\n" +
+            "*/\n" +
+            "\n" +
+            "logger('Adventure started!')\n" +
+            "myShip.setDestination(...spaceStation.getCoords());\n" +
+            "myShip.fly();\n" +
+            "\n" +
+            "\n" +
+            "/*\n" +
+            "*  Try mining! Uncomment the function call in the \"refueledShip\" listener\n" +
+            "*/\n" +
+            "\n" +
+            "\n" +
+            "function mineO3(){\n" +
+            "    planets[2].on(\"mined\", () => logger(\"Planet was mined successfully\"))\n" +
+            "\tmyShip.setDestination(...planets[2].getCoords());\n" +
+            "    myShip.fly();\n" +
+            "    myShip.on(\"arrived\", () => {\n" +
+            "        logger(\"Arrived at planet, let's start mining!\")\n" +
+            "    \tmyShip.extract(planets[2])\n" +
             "    })\n" +
-            "}\n" +
-            "\n" +
-            "function toWaterPlanet(ship){\n" +
-            "  ship.setDestination(...planets[0].getCoords())\n" +
-            "  ship.on(\"arrived\", ship=>extractWater(ship,planets[0]))  \n" +
-            "  ship.fly();\n" +
-            "}\n" +
-            "\n" +
-            "function extractWater(ship, planet){\n" +
-            "  ship.extract(planet).then(()=>logger('so far, so good? Click execute again!'))\n" +
             "}";
         const codeMirror = new CodeMirror.fromTextArea(document.getElementById('code'),{
             mode:'javascript',
@@ -107,7 +135,6 @@
             nSr.type = 'module';
             nSr.text = `
             import {starShips, planets, spaceStation} from './Game.js';
-
             ${userCode}
             `;
             document.body.appendChild(nSr)

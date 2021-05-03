@@ -5,7 +5,7 @@
       <paths name="absolva">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/var/www/neoan3/public_html/game" local="$PROJECT_DIR$" web="/game" />
           </mappings>
         </serverdata>
       </paths>

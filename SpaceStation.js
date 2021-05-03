@@ -55,6 +55,7 @@ export default class SpaceStation{
             setTimeout(()=>{
                 if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1){
                     reject(false);
+                    return;
                 }
                 this.#resources[ship.getCargo().type] += ship.getCargo().amount;
                 ship.resetCargo();
@@ -69,6 +70,7 @@ export default class SpaceStation{
             setTimeout(()=>{
                 if(this.#resources.o3 < 500 || this.#resources.water < 1000 || this.#resources.iron < 5000 || this.#fuelTank < 500){
                     reject('insufficient resources!')
+                    return;
                 }
                 this.#fuelTank -= 500;
                 this.#resources.o3 -= 500;
@@ -92,6 +94,7 @@ export default class SpaceStation{
             setTimeout(()=>{
                 if(amount <= 0){
                     reject(amount)
+                    return;
                 }
                 this.#fuelTank += amount;
                 this.#resources.o3 = 0;
@@ -105,7 +108,9 @@ export default class SpaceStation{
         return new Promise((resolve,reject)=>{
             setTimeout(()=>{
                 if(!Helper.proximity(ship,this) || this.#fuelTank < 1){
+                    console.log('rejected')
                     reject(false);
+                    return;
                 }
                 const rest = 500 - ship.getFuel();
                 if(this.#fuelTank < rest){
