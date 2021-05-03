@@ -11,16 +11,17 @@ body{
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    border: 3px dotted #ccc;
+    /*border: 3px dotted #ccc;*/
 }
 .planet.water{
-    background: #7f7fdc;
+    background: radial-gradient(circle, #3a3aff 0%, #5a5afd 100%);
+    /*background: #7f7fdc;*/
 }
 .planet.iron{
-    background: red;
+    background: radial-gradient(circle, #740000 50%, rgba(252, 86, 86, 0.5) 100%);
 }
 .planet.o3{
-    background: #bd49db;
+    background: radial-gradient(circle, #bd49db 0%, rgba(251,251,251,0) 100%);
 }
 .ship{
     cursor: pointer;
