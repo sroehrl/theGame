@@ -3,6 +3,7 @@ import Random from "./Random.js";
 import Ship from "./Ship.js";
 import SpaceStation from "./SpaceStation.js";
 
+
 export const spaceStation = new SpaceStation();
 class Game{
     constructor(containerElement, controlElement) {
@@ -50,30 +51,30 @@ class Game{
             case 'ship':
                 this.control.innerHTML = `
                     <h3>Ship</h3>
-                    <p>Fuel: ${detail.fuel}</p>
-                    <p>Position: ${this.system}-${detail.position[0]} | ${this.system}-${detail.position[1]}</p>
+                    <p>Fuel: ${detail.getFuel()}</p>
+                    <p>Position: ${this.system}-${detail.getPosition()[0]} | ${this.system}-${detail.getPosition()[1]}</p>
                     <h4>Cargo</h4>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>${detail.cargo.type}:${detail.cargo.amount}</p>
+                        <p>${detail.getCargo().type}:${detail.getCargo().amount}</p>
                     </div>`;
                 break;
             case 'planet':
                 this.control.innerHTML = `
                     <h3>Planet</h3>
                     <p>Type: ${detail.type}</p>
-                    <p>Coordinates: ${this.system}-${detail.coords[0]} | ${this.system}-${detail.coords[1]}</p>
+                    <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <p>Pressure: ${detail.pressure}</p>
                     `;
                 break;
             case 'station':
                 this.control.innerHTML = `
                     <h3>Space Station</h3>
-                    <p>FuelTank: ${detail.fuelTank}</p>
-                    <p>Coordinates: ${this.system}-${detail.coords[0]} | ${this.system}-${detail.coords[1]}</p>
+                    <p>FuelTank: ${detail.getFuelTank()}</p>
+                    <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>Water:${detail.resources.water}</p>
-                        <p>Iron:${detail.resources.iron}</p>
-                        <p>O3:${detail.resources.o3}</p>
+                        <p>Water:${detail.getResources().water}</p>
+                        <p>Iron:${detail.getResources().iron}</p>
+                        <p>O3:${detail.getResources().o3}</p>
                     </div>
                     `;
                 break;
