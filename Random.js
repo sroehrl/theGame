@@ -20,4 +20,8 @@ export default class Random{
     rnd(min,max){
         return Math.floor(Math.random() * max) + min
     }
+    string(length =6){
+        return Math.random().toString(16).substr(2, length);
+    }
+
 }

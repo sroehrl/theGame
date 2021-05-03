@@ -1,11 +1,18 @@
 import GameEvent from "./GameEvent.js";
 import Helper from "./Helper.js";
+import AudioFx from "./AudioFx.js";
+import Random from "./Random.js";
 export default class Ship{
     #fuel = 500;
     #cargo;
     #position;
     constructor(spaceStation, first=false) {
         this.spaceStation = spaceStation;
+        this.audioFxFly = new AudioFx('flying');
+        this.audioFxBeam = new AudioFx('beam');
+        this.audioFxRefuel = new AudioFx('refuel');
+        const random = new Random()
+        this.name = 'DSS-'+random.string(4);
         this.#fuel = 500;
         if(first){
             this.#position = [50,50];
@@ -67,17 +74,23 @@ export default class Ship{
         this.destination = [x,y];
     }
     extract(planet){
+        this.audioFxBeam.start();
         this.events.isMining(this);
-        return planet.mineMe(this)
+
+        return planet.mineMe(this).finally(()=>this.audioFxBeam.stop())
     }
     unload(entity){
-        return entity.acceptCargo(this);
+        this.audioFxBeam.start();
+        return entity.acceptCargo(this).finally(()=>this.audioFxBeam.stop());
+
     }
     fly(){
+        this.audioFxFly.start();
         this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
         this.shipElement.style.transform = 'scale(1) rotate(0)';
         if(this.#fuel <= 0){
-            alert('out of fuel')
+            this.audioFxFly.stop();
+            alert(this.name + ' is out of fuel!')
             return;
         }
         this.#fuel--;
@@ -97,6 +110,7 @@ export default class Ship{
         if(isMoving[0] || isMoving[1]){
             setTimeout(()=>this.fly(),300);
         } else {
+            this.audioFxFly.stop();
             this.shipElement.style.backgroundImage = "url('./assets/ufo.png')"
             this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
             this.events.idle(this);
@@ -108,10 +122,11 @@ export default class Ship{
         this.events[name] = cb;
     }
     refuel(entity = null){
+        this.audioFxRefuel.start();
         if(entity){
-            return entity.refuelRequest(this);
+            return entity.refuelRequest(this).finally(()=>this.audioFxRefuel.stop());
         }
-        return this.spaceStation.refuelRequest(this)
+        return this.spaceStation.refuelRequest(this).finally(()=>this.audioFxRefuel.stop());
     }
     refuelRequest(ship){
         return new Promise((resolve, reject) => {

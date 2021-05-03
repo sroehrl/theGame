@@ -50,7 +50,7 @@ class Game{
         switch (template){
             case 'ship':
                 this.control.innerHTML = `
-                    <h3>Ship</h3>
+                    <h3>Ship ${detail.name}</h3>
                     <p>Fuel: ${detail.getFuel()}</p>
                     <p>Position: ${this.system}-${detail.getPosition()[0]} | ${this.system}-${detail.getPosition()[1]}</p>
                     <h4>Cargo</h4>
