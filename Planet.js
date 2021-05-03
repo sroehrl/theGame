@@ -13,7 +13,8 @@ export default class Planet{
         this.element.style.top = position[1]+'%';
         this.element.className = `position-absolute planet ${this.type}`;
         this.events = {
-            click: function (){}
+            click: function (){},
+            cargoAccepted: function (){}
         }
     }
     getCoords(){
@@ -37,6 +38,19 @@ export default class Planet{
             const dispatch = new GameEvent('planet', this);
             elem.dispatchEvent(dispatch)
         })
+    }
+    acceptCargo(ship){
+        return new Promise(((resolve, reject) => {
+            setTimeout(()=>{
+                if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1){
+                    reject(false);
+                }
+                ship.resetCargo();
+                this.events.cargoAccepted(this);
+                resolve('cargoAccepted')
+            }, ship.getCargo().amount * 5)
+
+        }))
     }
     on(name, cb){
         this.events[name] = cb;

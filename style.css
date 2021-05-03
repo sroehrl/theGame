@@ -4,6 +4,7 @@ html,body{
 body{
     background-image: url("./assets/pexels-miriam-espacio-110854.jpg");
     background-size: cover;
+    font-family: 'Cutive Mono', monospace;
 }
 .planet{
     cursor: pointer;

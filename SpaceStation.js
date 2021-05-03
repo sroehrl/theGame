@@ -79,7 +79,7 @@ export default class SpaceStation{
                 this.events.builtShip(newShip);
                 this.hud.dispatchEvent(dispatch);
                 resolve(newShip)
-            }, 3000)
+            }, 30000)
         })
 
     }
@@ -88,7 +88,7 @@ export default class SpaceStation{
     }
     refineFuel(){
         return new Promise((resolve, reject) => {
-            const amount = this.#resources.o3 / 3;
+            const amount = Math.floor(this.#resources.o3 / 2.2);
             setTimeout(()=>{
                 if(amount <= 0){
                     reject(amount)

@@ -19,6 +19,8 @@ export default class Ship{
             idle: function (){},
             arrived: function(){},
             click: function(){},
+            cargoAccepted: function (){},
+            isMining: function(){}
         };
 
         this.init();
@@ -65,6 +67,7 @@ export default class Ship{
         this.destination = [x,y];
     }
     extract(planet){
+        this.events.isMining(this);
         return planet.mineMe(this)
     }
     unload(entity){
@@ -122,6 +125,25 @@ export default class Ship{
                 resolve(amount)
             }, amount * 70)
         })
+    }
+    acceptCargo(ship){
+        return new Promise(((resolve, reject) => {
+            setTimeout(()=>{
+                const mySpace = 500 - this.#cargo.amount;
+                if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1 || (this.#cargo.type && this.#cargo.type !== ship.getCargo().type)){
+                    reject(false);
+                }
+                if(mySpace < ship.getCargo().amount){
+                    this.#cargo.amount = 500;
+                } else {
+                    this.#cargo.amount += ship.getCargo().amount;
+                }
+                ship.resetCargo();
+                this.events.cargoAccepted(this);
+                resolve('cargoAccepted')
+            }, ship.getCargo().amount * 5)
+
+        }))
     }
     updatePosition(){
         this.shipElement.style.left = this.#position[0] + '%';
