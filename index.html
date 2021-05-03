@@ -53,8 +53,8 @@
             logger("JavaScript error: " + message + " on line " +
                 linenumber + " for " + url);
         }
-        let userCode = "logger('Adventure started!')\n" +
-            "starShips[0].setDestination(spaceStation.coords[0],spaceStation.coords[1]);\n" +
+        let userCode = localStorage.myCode || "logger('Adventure started!')\n" +
+            "starShips[0].setDestination(...spaceStation.getCoords());\n" +
             "starShips[0].fly()\n" +
             "starShips[0].on('arrived', ship => {\n" +
             "  logger(\"arrived at station: refueling\")\n" +
@@ -72,7 +72,7 @@
             "}\n" +
             "\n" +
             "function toWaterPlanet(ship){\n" +
-            "  ship.setDestination(planets[0].coords[0], planets[0].coords[1])\n" +
+            "  ship.setDestination(...planets[0].getCoords())\n" +
             "  ship.on(\"arrived\", ship=>extractWater(ship,planets[0]))  \n" +
             "  ship.fly();\n" +
             "}\n" +
@@ -91,6 +91,7 @@
         })
         const exec = document.getElementById('exec');
         exec.addEventListener('click', ev=>{
+            localStorage.setItem('myCode', userCode);
             const existing = document.getElementById('userJs');
             if(existing){
                 existing.parentNode.removeChild(existing);
