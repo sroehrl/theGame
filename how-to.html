@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>How to</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -84,9 +86,18 @@
         <p>getCargo()</p>
         <p>synchronous</p>
         <p>returns an object (e.g. {type: 'water', amount: 300}) indicating current cargo</p>
+        <p>setBurnRate(num)</p>
+        <p>synchronous</p>
+        <p>Default/Minimum:1, Max: 10. Sets a ship's fuel burn rate. You are in space, so efficiency penalties aren't that high.</p>
         <p>setDestination(x,y)</p>
         <p>synchronous</p>
         <p>sets autopilot to coordinates (does not start flight!)</p>
+        <p>addBeamStrength()</p>
+        <p>asynchronous / void</p>
+        <p>equips the ship with a beamerModule to enhance efficiency. Ship needs to be in hangar. When this operations fails, your beamer might break! </p>
+        <p>addCapacity()</p>
+        <p>asynchronous / void</p>
+        <p>equips the ship with a cargoModule to enhance efficiency. Ship needs to be in hangar. When this operations fails, your cargo capacity is reset! </p>
         <p>extract(planet)</p>
         <p>asynchronous (depending on pressure)</p>
         <p>expects an instance of a planet and mines its resource</p>
@@ -95,8 +106,11 @@
         <p>You can unload at the station, other ships or planets. Cargo dumped at a planet will be lost and other ships
             might have limited capacity! Example: starShips[0].unload(spaceStation)</p>
         <p>fly()</p>
-        <p>asynchronous (depending on distance)</p>
+        <p>void (time depending on distance)</p>
         <p>Executes the autopilot and flies to defined destination.</p>
+        <p>refuel()</p>
+        <p>asynchronous (depending on amount refueling)</p>
+        <p>Requires an entity able of refueling (e.g. ship.refuel(spaceStation))</p>
         <div><strong>Event</strong></div>
         <div><strong>Returns</strong></div>
         <div><strong>Description</strong></div>
@@ -130,6 +144,12 @@
         <p>getResources()</p>
         <p>synchronous</p>
         <p>Returns an object showing current resource levels (e.g. {water:50, o3:100, iron:111})</p>
+        <p>getModules()</p>
+        <p>synchronous</p>
+        <p>Returns the station's stored modules</p>
+        <p>getModuleRequirements()</p>
+        <p>synchronous</p>
+        <p>Returns the requirements to build modules. <strong>Depends on the system!</strong></p>
         <p>buildShip()</p>
         <p>asynchronous / 30 seconds</p>
         <p>
@@ -138,6 +158,13 @@
             o3: 500 <br>
             water: 1000 <br>
             iron: 5000 <br>
+            If any of the prerequisites aren't met, the built fails.
+        </p>
+        <p>buildModule()</p>
+        <p>asynchronous / 25 seconds</p>
+        <p>
+            Builds a module and places it in its hangar. The requirements can be get through "getModuleRequirements()":
+            <br>
             If any of the prerequisites aren't met, the built fails.
         </p>
         <p>refineFuel()</p>
@@ -152,6 +179,9 @@
         <p>builtShip</p>
         <p>new starShip instance</p>
         <p>Fired when a ship was successfully built. Caution: The new ship is already placed in the global starShips-array. Don't add it again!</p>
+        <p>builtModule</p>
+        <p>stored Modules</p>
+        <p>Fired when a module was successfully built. In order to equip a ship, you must invoke the ship's methods accordingly</p>
         <p>refinedFuel</p>
         <p>instance</p>
         <p>Fired when o3 was converted to fuel.</p>

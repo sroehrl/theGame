@@ -16,6 +16,7 @@ export default class AudioFx{
         }
         this.audioContainer = document.getElementById('audios');
         this.audioElement = document.createElement('audio');
+        this.audioElement.volume = .5;
         this.audioElement.loop = true;
         this.audioElement.preload;
         this.audioElement.src = this.fileName;
@@ -41,7 +42,7 @@ export default class AudioFx{
             this.audioElement.pause();
             this.audioElement.currentTime = 0;
             this.isPlaying = false;
-            this.audioElement.volume = 1;
+            this.audioElement.volume = .5;
         },100)
 
 

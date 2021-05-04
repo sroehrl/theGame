@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Game</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
     <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
@@ -41,7 +43,7 @@
         </div>
         <div class="grid-8-4" style="min-height: 100vh">
             <textarea class="b-rounded w-100p h-100p" id="code" rows="10"></textarea>
-            <div class="bg-black b-l-1 b-white p-2" id="logger" style="overflow-y: auto"></div>
+            <div class="bg-black b-l-1 b-white p-2" id="logger" style="overflow-y: auto; max-height: 780px"></div>
         </div>
 
     </div>
@@ -52,7 +54,7 @@
             music: false
         }
     </script>
-    <script type="module" src="Game.js"></script>
+<!--    <script type="module" src="Game.js"></script>-->
     <script type="module" >
         import AudioFx from "./AudioFx.js";
         const music = new AudioFx();
@@ -61,7 +63,7 @@
         },250))
     </script>
     <script>
-        var logger = function (print){
+        const logger = function (print){
             let text = print.toString();
             if(text === '[object Object]'){
                 text = "{\n";
@@ -71,8 +73,10 @@
                 text += '}';
             }
             let ele = document.createElement('p');
-            ele.innerText = text;
-            document.getElementById('logger').appendChild(ele)
+            const time = ((new Date().getTime() - startTime.getTime())/1000).toFixed(2);
+            ele.innerText = time + ': ' + text;
+            const logEle = document.getElementById('logger');
+            logEle.insertBefore(ele, logEle.childNodes[0])
         }
         window.onerror = function(message, url, linenumber) {
             logger("JavaScript error: " + message + " on line " +
@@ -131,7 +135,15 @@
         })
         const exec = document.getElementById('exec');
         exec.addEventListener('click', ev=>{
-            localStorage.setItem('myCode', userCode);
+            applyCode(userCode)
+        })
+        let startTime;
+        function applyCode(userCode, stored = true){
+            if(stored){
+                localStorage.setItem('myCode', userCode);
+            } else {
+                startTime = new Date();
+            }
             const existing = document.getElementById('userJs');
             if(existing){
                 existing.parentNode.removeChild(existing);
@@ -141,10 +153,15 @@
             nSr.type = 'module';
             nSr.text = `
             import {starShips, planets, spaceStation} from './Game.js';
-            ${userCode}
+            starShips.forEach(ship => ship.stop());
+            setTimeout(()=>{
+                starShips.forEach(ship => ship.resume());
+                ${userCode}
+            },300)
             `;
             document.body.appendChild(nSr)
-        })
+        }
+        applyCode('', false)
 
     </script>
 
