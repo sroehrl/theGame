@@ -6,14 +6,23 @@ export default class Ship{
     #fuel = 500;
     #cargo;
     #position;
+    #capacity;
+    #stopped;
+    #burnRate;
+    #movestepper = 0;
+    #beamStrength = 1;
     constructor(spaceStation, first=false) {
         this.spaceStation = spaceStation;
+        this.#stopped = false;
+        this.#burnRate = 1;
         this.audioFxFly = new AudioFx('flying');
         this.audioFxBeam = new AudioFx('beam');
         this.audioFxRefuel = new AudioFx('refuel');
         const random = new Random()
         this.name = 'DSS-'+random.string(4);
+        this.#capacity = 500;
         this.#fuel = 500;
+        this.activity = 'idle';
         if(first){
             this.#position = [50,50];
         } else {
@@ -32,6 +41,22 @@ export default class Ship{
 
         this.init();
     }
+    setBurnRate(to){
+        if( isNaN(to) || to < 1){
+            this.#burnRate = 1;
+            return;
+        } else if(to>10){
+            this.#burnRate = 1;
+            return;
+        }
+        this.#burnRate = to;
+    }
+    getBeamStrength(){
+        return this.#beamStrength;
+    }
+    getCapacity(){
+        return this.#capacity;
+    }
     getPosition(){
         return this.#position;
     }
@@ -45,6 +70,24 @@ export default class Ship{
         if(Helper.proximity(this, byEntity)){
             this.#cargo.type = cargoType;
             this.#cargo.amount = cargoAmount;
+        }
+    }
+    addBeamStrength(){
+        if(Helper.proximity(this, this.spaceStation)){
+            this.spaceStation.equip(this, 'beamerModule')
+                .then(res => this.#beamStrength += res)
+                .catch(()=>{
+                    this.#beamStrength = .5;
+                })
+        }
+    }
+    addCapacity(){
+        if(Helper.proximity(this, this.spaceStation)){
+            this.spaceStation.equip(this, 'cargoModule')
+                .then(res => this.#capacity += res)
+                .catch(()=>{
+                    this.#capacity = 300;
+                })
         }
     }
     resetCargo(){
@@ -74,33 +117,62 @@ export default class Ship{
         this.destination = [x,y];
     }
     extract(planet){
+        this.activity = 'extracting';
         this.audioFxBeam.start();
         this.events.isMining(this);
 
-        return planet.mineMe(this).finally(()=>this.audioFxBeam.stop())
+        return planet.mineMe(this).finally(()=>{
+            this.activity = 'idle';
+            this.audioFxBeam.stop()
+        })
     }
     unload(entity){
+        this.activity = 'unloading';
         this.audioFxBeam.start();
-        return entity.acceptCargo(this).finally(()=>this.audioFxBeam.stop());
+        return entity.acceptCargo(this).finally(()=>{
+            this.activity = 'idle';
+            this.audioFxBeam.stop()
+        });
 
     }
+    stop(){
+        this.#stopped = true;
+    }
+    resume(){
+        this.#stopped = false;
+    }
+
     fly(){
+        if(this.#stopped){
+            return;
+        }
+
+        const moveAmount = this.#burnRate * 1.3 - Math.log(this.#burnRate);
+
+        this.activity = 'flying';
         this.audioFxFly.start();
         this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
         this.shipElement.style.transform = 'scale(1) rotate(0)';
-        if(this.#fuel <= 0){
+        if(this.#fuel <= this.#burnRate){
             this.audioFxFly.stop();
-            alert(this.name + ' is out of fuel!')
+            this.activity = 'idle';
+            alert(this.name + ' is out of fuel!');
             return;
         }
-        this.#fuel--;
+        this.#fuel-= this.#burnRate+this.#movestepper;
+        this.#movestepper++;
         let futurePos = [this.#position[0], this.#position[1]];
         let isMoving = [true,true];
         for(let i = 0; i<2; i++){
 
-            if(Math.abs(this.#position[i]-this.destination[i])>0){
-                futurePos[i] > this.destination[i] ? futurePos[i]-- : futurePos[i]++
+            if(Math.abs(this.#position[i]-this.destination[i])>moveAmount){
+                if(futurePos[i] > this.destination[i]){
+                    futurePos[i] -= moveAmount;
+                } else {
+                    futurePos[i] += moveAmount;
+                }
             } else {
+                futurePos[i] = this.destination[i];
                 isMoving[i] = false;
             }
         }
@@ -108,8 +180,13 @@ export default class Ship{
         this.updatePosition()
 
         if(isMoving[0] || isMoving[1]){
-            setTimeout(()=>this.fly(),300);
+            setTimeout(()=>{
+                this.#movestepper = this.#movestepper > 1 ? this.#movestepper+1 : 0;
+                this.fly()
+            },300);
         } else {
+            this.#movestepper = 0;
+            this.activity = 'idle';
             this.audioFxFly.stop();
             this.shipElement.style.backgroundImage = "url('./assets/ufo.png')"
             this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
@@ -122,11 +199,18 @@ export default class Ship{
         this.events[name] = cb;
     }
     refuel(entity = null){
+        this.activity = 'refueling';
         this.audioFxRefuel.start();
         if(entity){
-            return entity.refuelRequest(this).finally(()=>this.audioFxRefuel.stop());
+            return entity.refuelRequest(this).finally(()=>{
+                this.audioFxRefuel.stop();
+                this.activity = 'idle';
+            });
         }
-        return this.spaceStation.refuelRequest(this).finally(()=>this.audioFxRefuel.stop());
+        return this.spaceStation.refuelRequest(this).finally(()=>{
+            this.activity = 'idle';
+            this.audioFxRefuel.stop()
+        });
     }
     refuelRequest(ship){
         return new Promise((resolve, reject) => {
@@ -142,8 +226,10 @@ export default class Ship{
         })
     }
     acceptCargo(ship){
+        this.activity = 'acceptCargo';
         return new Promise(((resolve, reject) => {
             setTimeout(()=>{
+                this.activity = 'idle';
                 const mySpace = 500 - this.#cargo.amount;
                 if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1 || (this.#cargo.type && this.#cargo.type !== ship.getCargo().type)){
                     reject(false);

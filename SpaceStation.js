@@ -6,21 +6,40 @@ export default class SpaceStation{
     #resources;
     #fuelTank;
     #coords;
+    #modules;
+    #moduleRequirements;
     constructor() {
         const rnd = new Random();
         this.#coords = [rnd.rnd(30,70),rnd.rnd(30,70)];
         this.#fuelTank = 1000;
         this.hud = null;
+        this.#modules = {
+            cargoModule: 0,
+            beamerModule: 0
+        }
+        this.#moduleRequirements = {
+            cargoModule: {
+                water: rnd.rnd(2000, 6000),
+                iron: rnd.rnd(1000, 2000),
+                o3: rnd.rnd(600, 2000)
+            },
+            beamerModule: {
+                water: rnd.rnd(1000, 8000),
+                iron: rnd.rnd(1000, 8000),
+                o3: rnd.rnd(1000, 3000)
+            }
+        }
         this.#resources = {
             iron: 100,
             o3:321,
-            water:0
+            water:210
         }
         this.events = {
             cargoAccepted: function (){},
             refueledShip: function (){},
             builtShip: function (){},
-            refinedFuel: function(){}
+            refinedFuel: function(){},
+            builtModule: function (){}
         }
         this.init();
     }
@@ -33,6 +52,12 @@ export default class SpaceStation{
     getResources(){
         return this.#resources;
     }
+    getModules(){
+        return this.#modules;
+    }
+    getModuleRequirements(){
+        return this.#moduleRequirements;
+    }
     init(){
         if(this.hud){
             return;
@@ -41,6 +66,26 @@ export default class SpaceStation{
         this.stationElement.className = 'position-absolute station';
         this.stationElement.style.left = this.#coords[0]+'%';
         this.stationElement.style.top = this.#coords[1]+'%';
+    }
+    equip(ship, moduleString){
+        return new Promise((resolve, reject) => {
+
+            if(!Helper.proximity(this, ship) || typeof this.#modules[moduleString] === 'undefined' || this.#modules[moduleString] < 1){
+                reject('failed to equip ship');
+                return;
+            }
+            switch(moduleString){
+                case 'cargoModule':
+                    this.#modules[moduleString]--;
+                    resolve(500/(ship.getCapacity()/500))
+                    break;
+                case 'beamerModule':
+                    this.#modules[moduleString]--;
+                    resolve(1/(ship.getBeamStrength()/1))
+                    break;
+            }
+        })
+
     }
     registerListener(elem){
         this.hud = elem;
@@ -65,6 +110,28 @@ export default class SpaceStation{
 
         }))
     }
+    buildModule(moduleString) {
+        return new Promise((resolve, reject) => {
+            if(typeof this.#moduleRequirements[moduleString] === 'undefined'){
+                reject('unknown module');
+                return;
+            }
+            const requirements = this.getModuleRequirements();
+            if(Object.keys(requirements).filter(key=>this.getResources()[key]< requirements[key]).length > 0){
+                reject('insufficient resources');
+                return;
+            }
+            Object.keys(requirements).forEach(key=>{
+                this.#resources[key] -= requirements[key];
+            })
+            setTimeout(()=>{
+                this.#modules[moduleString]++;
+                this.events.builtModule(this.getModules())
+                resolve(this.getModules())
+            }, 25000)
+        })
+    }
+
     buildShip(){
         return new Promise((resolve, reject) => {
             setTimeout(()=>{
@@ -91,13 +158,13 @@ export default class SpaceStation{
     refineFuel(){
         return new Promise((resolve, reject) => {
             const amount = Math.floor(this.#resources.o3 / 2.2);
+            this.#resources.o3 -= amount;
             setTimeout(()=>{
                 if(amount <= 0){
                     reject(amount)
                     return;
                 }
                 this.#fuelTank += amount;
-                this.#resources.o3 = 0;
                 this.events.refinedFuel(this)
                 resolve(amount)
             }, amount * 100)

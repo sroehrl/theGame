@@ -31,7 +31,7 @@ export default class Planet{
                 ship.setCargo(this.type, 500, this)
                 this.events.mined(ship);
                 resolve(500);
-            },this.pressure / 10)
+            },this.pressure / 10 * ship.getBeamStrength())
         })
 
     }
@@ -59,7 +59,6 @@ export default class Planet{
         this.events[name] = cb;
     }
     bind(){
-
         return this.element;
     }
 }

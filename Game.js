@@ -14,6 +14,7 @@ class Game{
         this.planets = [];
         this.ships = [];
         this.spaceStation = spaceStation;
+        this.hudInterval = setInterval(()=>{},1000)
         this.init();
     }
     init(){
@@ -47,27 +48,38 @@ class Game{
     }
 
     controlDetails(template, detail){
-        switch (template){
-            case 'ship':
-                this.control.innerHTML = `
+        clearInterval(this.hudInterval)
+        const display = () =>{
+            switch (template){
+                case 'ship':
+                    this.control.innerHTML = `
                     <h3>Ship ${detail.name}</h3>
                     <p>Fuel: ${detail.getFuel()}</p>
                     <p>Position: ${this.system}-${detail.getPosition()[0]} | ${this.system}-${detail.getPosition()[1]}</p>
+                    <p>Miming efficiency: <strong>${detail.getBeamStrength()}</strong></p>
                     <h4>Cargo</h4>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>${detail.getCargo().type}:${detail.getCargo().amount}</p>
-                    </div>`;
-                break;
-            case 'planet':
-                this.control.innerHTML = `
+                        <p>Capacity: ${detail.getCapacity()}</p>
+                        
+                    ${detail.getCargo().type ? (
+                        `<p>${detail.getCargo().type}:${detail.getCargo().amount}</p>`
+                    ) : (
+                        `<p>none</p>`
+                    )}
+                    </div>
+                    <h4>Activity: ${detail.activity}</h4>
+                    `;
+                    break;
+                case 'planet':
+                    this.control.innerHTML = `
                     <h3>Planet</h3>
                     <p>Type: ${detail.type}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <p>Pressure: ${detail.pressure}</p>
                     `;
-                break;
-            case 'station':
-                this.control.innerHTML = `
+                    break;
+                case 'station':
+                    this.control.innerHTML = `
                     <h3>Space Station</h3>
                     <p>FuelTank: ${detail.getFuelTank()}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
@@ -75,11 +87,19 @@ class Game{
                         <p>Water:${detail.getResources().water}</p>
                         <p>Iron:${detail.getResources().iron}</p>
                         <p>O3:${detail.getResources().o3}</p>
+                        <p>Beamer Modules:${detail.getModules().beamerModule}</p>
+                        <p>Cargo Modules:${detail.getModules().cargoModule}</p>
+                        
                     </div>
                     `;
-                break;
-            default: this.control.innerHTML = '';
+                    break;
+                default: this.control.innerHTML = '';
+            }
         }
+        this.hudInterval = setInterval(()=>{
+            display();
+        },500)
+        display()
 
     }
     render(){
