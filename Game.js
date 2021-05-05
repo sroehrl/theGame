@@ -55,11 +55,11 @@ class Game{
                     this.control.innerHTML = `
                     <h3>Ship ${detail.name}</h3>
                     <p>Fuel: ${detail.getFuel()}</p>
-                    <p>Position: ${this.system}-${detail.getPosition()[0]} | ${this.system}-${detail.getPosition()[1]}</p>
+                    <p>Position: ${this.system}-${detail.getPosition()[0].toFixed(2)} | ${this.system}-${detail.getPosition()[1].toFixed(2)}</p>
                     <p>Miming efficiency: <strong>${detail.getBeamStrength()}</strong></p>
                     <h4>Cargo</h4>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>Capacity: ${detail.getCapacity()}</p>
+                        <p>Capacity: ${detail.getCapacity().toFixed(2)}</p>
                         
                     ${detail.getCargo().type ? (
                         `<p>${detail.getCargo().type}:${detail.getCargo().amount}</p>`
@@ -73,9 +73,9 @@ class Game{
                 case 'planet':
                     this.control.innerHTML = `
                     <h3>Planet</h3>
-                    <p>Type: ${detail.type}</p>
+                    <p>Type: ${detail.getType()}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
-                    <p>Pressure: ${detail.pressure}</p>
+                    <p>Pressure: ${detail.getPressure()}</p>
                     `;
                     break;
                 case 'station':
