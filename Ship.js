@@ -9,10 +9,11 @@ export default class Ship{
     #capacity;
     #stopped;
     #burnRate;
-    #movestepper = 0;
+    #moveStepper = 0;
     #beamStrength = 1;
-    constructor(spaceStation, first=false) {
-        this.spaceStation = spaceStation;
+    #spaceStation;
+    constructor(spaceStation, first=false, mode = 'default') {
+        this.#spaceStation = spaceStation;
         this.#stopped = false;
         this.#burnRate = 1;
         this.audioFxFly = new AudioFx('flying');
@@ -23,6 +24,7 @@ export default class Ship{
         this.#capacity = 500;
         this.#fuel = 500;
         this.activity = 'idle';
+        this.mode = mode;
         if(first){
             this.#position = [50,50];
         } else {
@@ -39,7 +41,7 @@ export default class Ship{
             isMining: function(){}
         };
 
-        this.init();
+        this.init(this.mode);
     }
     setBurnRate(to){
         if( isNaN(to) || to < 1){
@@ -73,8 +75,8 @@ export default class Ship{
         }
     }
     addBeamStrength(){
-        if(Helper.proximity(this, this.spaceStation)){
-            this.spaceStation.equip(this, 'beamerModule')
+        if(Helper.proximity(this, this.#spaceStation)){
+            this.#spaceStation.equip(this, 'beamerModule')
                 .then(res => this.#beamStrength += res)
                 .catch(()=>{
                     this.#beamStrength = .5;
@@ -82,8 +84,8 @@ export default class Ship{
         }
     }
     addCapacity(){
-        if(Helper.proximity(this, this.spaceStation)){
-            this.spaceStation.equip(this, 'cargoModule')
+        if(Helper.proximity(this, this.#spaceStation)){
+            this.#spaceStation.equip(this, 'cargoModule')
                 .then(res => this.#capacity += res)
                 .catch(()=>{
                     this.#capacity = 300;
@@ -101,10 +103,25 @@ export default class Ship{
             this.#fuel += addAmount;
         }
     }
-    init(){
-        this.shipElement = document.createElement('div');
-        this.shipElement.className = 'position-absolute ship';
-        this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
+    init(mode = 'default'){
+        this.mode = mode;
+        if(!this.shipElement){
+            this.shipElement = document.createElement('div');
+        }
+        switch(mode){
+            case 'bar':
+                this.shipElement.className = 'position-absolute bar';
+                this.shipElement.style.top = 'calc(var(--barWidth) * ' + (this.#spaceStation.getStats().shipsBuilt/100) + ')';
+                this.shipElement.style.left = 'calc(var(--barWidth) * ' + this.#spaceStation.getStats().shipsBuilt + ')';
+                break;
+            case 'dot':
+                this.shipElement.className = 'position-absolute dot';
+                break;
+            default:
+                this.shipElement.className = 'position-absolute ship';
+                this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
+        }
+
         this.updatePosition();
     }
     registerListener(elem){
@@ -137,6 +154,7 @@ export default class Ship{
     }
     stop(){
         this.#stopped = true;
+        this.#moveStepper = 0;
     }
     resume(){
         this.#stopped = false;
@@ -151,16 +169,16 @@ export default class Ship{
 
         this.activity = 'flying';
         this.audioFxFly.start();
-        this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
-        this.shipElement.style.transform = 'scale(1) rotate(0)';
+        this.animate('beam');
+
         if(this.#fuel <= this.#burnRate){
             this.audioFxFly.stop();
             this.activity = 'idle';
             alert(this.name + ' is out of fuel!');
             return;
         }
-        this.#fuel-= this.#burnRate+this.#movestepper;
-        this.#movestepper++;
+        this.#fuel-= this.#burnRate+this.#moveStepper;
+        this.#moveStepper++;
         let futurePos = [this.#position[0], this.#position[1]];
         let isMoving = [true,true];
         for(let i = 0; i<2; i++){
@@ -181,15 +199,15 @@ export default class Ship{
 
         if(isMoving[0] || isMoving[1]){
             setTimeout(()=>{
-                this.#movestepper = this.#movestepper > 1 ? this.#movestepper+1 : 0;
+                this.#moveStepper = this.#moveStepper > 1 ? this.#moveStepper+1 : 0;
                 this.fly()
             },300);
         } else {
-            this.#movestepper = 0;
+            this.#moveStepper = 0;
             this.activity = 'idle';
             this.audioFxFly.stop();
-            this.shipElement.style.backgroundImage = "url('./assets/ufo.png')"
-            this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
+            this.animate('idle')
+
             this.events.idle(this);
             this.events.arrived(this);
         }
@@ -207,10 +225,24 @@ export default class Ship{
                 this.activity = 'idle';
             });
         }
-        return this.spaceStation.refuelRequest(this).finally(()=>{
+        return this.#spaceStation.refuelRequest(this).finally(()=>{
             this.activity = 'idle';
             this.audioFxRefuel.stop()
         });
+    }
+    animate(change){
+        if(this.mode === 'default'){
+            switch (change){
+                case 'idle':
+                    this.shipElement.style.backgroundImage = "url('./assets/ufo.png')"
+                    this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
+                    break;
+                case 'beam':
+                    this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
+                    this.shipElement.style.transform = 'scale(1) rotate(0)';
+                    break;
+            }
+        }
     }
     refuelRequest(ship){
         return new Promise((resolve, reject) => {
@@ -247,8 +279,10 @@ export default class Ship{
         }))
     }
     updatePosition(){
-        this.shipElement.style.left = this.#position[0] + '%';
-        this.shipElement.style.top = this.#position[1] + '%';
+        if(this.mode === 'default' || this.mode === 'dot'){
+            this.shipElement.style.left = this.#position[0] + '%';
+            this.shipElement.style.top = this.#position[1] + '%';
+        }
     }
     bind(){
         return this.shipElement;

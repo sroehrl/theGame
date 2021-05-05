@@ -89,8 +89,10 @@ class Game{
                         <p>O3:${detail.getResources().o3.toFixed(0)}</p>
                         <p>Beamer Modules:${detail.getModules().beamerModule}</p>
                         <p>Cargo Modules:${detail.getModules().cargoModule}</p>
-                        
                     </div>
+                    <p>Resources mined: ${(detail.getStats().o3Mined+detail.getStats().ironMined+detail.getStats().waterMined).toFixed(1)}</p>
+                    <p>Ships built: ${detail.getStats().shipsBuilt}</p>
+                    <h4>Level: <br> ${detail.getLevel().toFixed(1)} resources/min</h4>
                     `;
                     break;
                 default: this.control.innerHTML = '';
@@ -119,6 +121,10 @@ container.innerHTML = '';
 const game = new Game(container, controlElement);
 // export const starShips = [new Ship(spaceStation)]
 game.registerShip(new Ship(spaceStation, true))
+/*setInterval(()=>{
+    game.registerShip(new Ship(spaceStation, false, 'bar'))
+},1000)*/
+
 
 export const starShips = game.ships;
 export const planets = game.planets;

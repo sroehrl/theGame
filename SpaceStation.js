@@ -8,14 +8,23 @@ export default class SpaceStation{
     #coords;
     #modules;
     #moduleRequirements;
+    #stats;
+    #lastTotal=0;
     constructor() {
         const rnd = new Random();
         this.#coords = [rnd.rnd(30,70),rnd.rnd(30,70)];
         this.#fuelTank = 1000;
         this.hud = null;
         this.#modules = {
-            cargoModule: 0,
-            beamerModule: 0
+            cargoModule: 50,
+            beamerModule: 50
+        }
+        this.#stats = {
+            shipsBuilt: 0,
+            waterMined:0,
+            ironMined:0,
+            o3Mined:0,
+            modulesBuilt:0,
         }
         this.#moduleRequirements = {
             cargoModule: {
@@ -41,7 +50,14 @@ export default class SpaceStation{
             refinedFuel: function(){},
             builtModule: function (){}
         }
+        setInterval(()=>{
+            const total = this.#stats.waterMined + this.#stats.ironMined + this.#stats.o3Mined;
+            this.#lastTotal = total - this.#lastTotal;
+        },60000)
         this.init();
+    }
+    getLevel(){
+        return this.#lastTotal;
     }
     getFuelTank(){
         return this.#fuelTank;
@@ -57,6 +73,9 @@ export default class SpaceStation{
     }
     getModuleRequirements(){
         return this.#moduleRequirements;
+    }
+    getStats(){
+        return this.#stats;
     }
     init(){
         if(this.hud){
@@ -103,6 +122,7 @@ export default class SpaceStation{
                     return;
                 }
                 this.#resources[ship.getCargo().type] += ship.getCargo().amount;
+                this.#stats[ship.getCargo().type+'Mined'] += ship.getCargo().amount;
                 ship.resetCargo();
                 this.events.cargoAccepted(this);
                 resolve('cargoAccepted')
@@ -126,6 +146,7 @@ export default class SpaceStation{
             })
             setTimeout(()=>{
                 this.#modules[moduleString]++;
+                this.#stats.modulesBuilt++;
                 this.events.builtModule(this.getModules())
                 resolve(this.getModules())
             }, 25000)
@@ -147,6 +168,7 @@ export default class SpaceStation{
                 const dispatch = new GameEvent('newShip',newShip);
                 this.events.builtShip(newShip);
                 this.hud.dispatchEvent(dispatch);
+                this.#stats.shipsBuilt++
                 resolve(newShip)
             }, 30000)
         })

@@ -23,6 +23,25 @@ body{
 .planet.o3{
     background: radial-gradient(circle, #bd49db 0%, rgba(251,251,251,0) 100%);
 }
+:root{
+    --barWidth: 20px;
+}
+
+.bar{
+    cursor: pointer;
+    width: var(--barWidth);
+    height: 25px;
+    outline: black dotted 1px;
+    background: #228b8b;
+}
+.dot{
+    cursor: pointer;
+    width: 10px;
+    height: 10px;
+    background: #b0ff2f;
+    border-radius: 50%;
+    transition: all linear 300ms;
+}
 .ship{
     cursor: pointer;
     width: 25px;
