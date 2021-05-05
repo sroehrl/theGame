@@ -84,9 +84,9 @@ class Game{
                     <p>FuelTank: ${detail.getFuelTank()}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>Water:${detail.getResources().water}</p>
-                        <p>Iron:${detail.getResources().iron}</p>
-                        <p>O3:${detail.getResources().o3}</p>
+                        <p>Water:${detail.getResources().water.toFixed(0)}</p>
+                        <p>Iron:${detail.getResources().iron.toFixed(0)}</p>
+                        <p>O3:${detail.getResources().o3.toFixed(0)}</p>
                         <p>Beamer Modules:${detail.getModules().beamerModule}</p>
                         <p>Cargo Modules:${detail.getModules().cargoModule}</p>
                         
