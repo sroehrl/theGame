@@ -126,7 +126,8 @@
             "}";
         const codeMirror = new CodeMirror.fromTextArea(document.getElementById('code'),{
             mode:'javascript',
-            theme: "ayu-dark"
+            theme: "ayu-dark",
+            lineNumbers: true
         })
         codeMirror.setOption('value',userCode)
         codeMirror.setSize(null, 800)

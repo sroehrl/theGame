@@ -116,7 +116,7 @@ export default class SpaceStation{
                 reject('unknown module');
                 return;
             }
-            const requirements = this.getModuleRequirements();
+            const requirements = this.getModuleRequirements()[moduleString];
             if(Object.keys(requirements).filter(key=>this.getResources()[key]< requirements[key]).length > 0){
                 reject('insufficient resources');
                 return;
