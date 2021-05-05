@@ -39,7 +39,7 @@ export default class Planet{
                 ship.setCargo(this.#type, ship.getCapacity(), this)
                 this.events.mined(ship);
                 resolve(ship.getCapacity());
-            },this.#pressure / 10 * ship.getBeamStrength())
+            },this.#pressure / (10 * ship.getBeamStrength()))
         })
 
     }
