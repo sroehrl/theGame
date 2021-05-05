@@ -16,8 +16,8 @@ export default class SpaceStation{
         this.#fuelTank = 1000;
         this.hud = null;
         this.#modules = {
-            cargoModule: 50,
-            beamerModule: 50
+            cargoModule: 0,
+            beamerModule: 0
         }
         this.#stats = {
             shipsBuilt: 0,
