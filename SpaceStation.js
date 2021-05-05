@@ -86,6 +86,16 @@ export default class SpaceStation{
         this.stationElement.style.left = this.#coords[0]+'%';
         this.stationElement.style.top = this.#coords[1]+'%';
     }
+    cheat(){
+        if(location.hostname === "localhost"){
+            this.#modules.cargoModule = 50;
+            this.#modules.beamerModule = 50;
+            this.#resources.o3 = 100000;
+            this.#resources.iron = 100000;
+            this.#resources.water = 100000;
+            this.#fuelTank = 100000;
+        }
+    }
     equip(ship, moduleString){
         return new Promise((resolve, reject) => {
 

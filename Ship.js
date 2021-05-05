@@ -119,7 +119,7 @@ export default class Ship{
                 break;
             default:
                 this.shipElement.className = 'position-absolute ship';
-                this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
+                this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufoIdle+"')"
         }
 
         this.updatePosition();
@@ -135,20 +135,20 @@ export default class Ship{
     }
     extract(planet){
         this.activity = 'extracting';
-        this.audioFxBeam.start();
+        this.audioFxBeam.play();
         this.events.isMining(this);
 
         return planet.mineMe(this).finally(()=>{
             this.activity = 'idle';
-            this.audioFxBeam.stop()
+            this.audioFxBeam.player.stop()
         })
     }
     unload(entity){
         this.activity = 'unloading';
-        this.audioFxBeam.start();
+        this.audioFxBeam.play();
         return entity.acceptCargo(this).finally(()=>{
             this.activity = 'idle';
-            this.audioFxBeam.stop()
+            this.audioFxBeam.player.stop()
         });
 
     }
@@ -168,11 +168,10 @@ export default class Ship{
         const moveAmount = this.#burnRate * 1.3 - Math.log(this.#burnRate);
 
         this.activity = 'flying';
-        this.audioFxFly.start();
+        this.audioFxFly.play(0.3);
         this.animate('beam');
 
         if(this.#fuel <= this.#burnRate){
-            this.audioFxFly.stop();
             this.activity = 'idle';
             alert(this.name + ' is out of fuel!');
             return;
@@ -205,7 +204,6 @@ export default class Ship{
         } else {
             this.#moveStepper = 0;
             this.activity = 'idle';
-            this.audioFxFly.stop();
             this.animate('idle')
 
             this.events.idle(this);
@@ -218,27 +216,25 @@ export default class Ship{
     }
     refuel(entity = null){
         this.activity = 'refueling';
-        this.audioFxRefuel.start();
+        this.audioFxRefuel.play(4);
         if(entity){
             return entity.refuelRequest(this).finally(()=>{
-                this.audioFxRefuel.stop();
                 this.activity = 'idle';
             });
         }
         return this.#spaceStation.refuelRequest(this).finally(()=>{
             this.activity = 'idle';
-            this.audioFxRefuel.stop()
         });
     }
     animate(change){
         if(this.mode === 'default'){
             switch (change){
                 case 'idle':
-                    this.shipElement.style.backgroundImage = "url('./assets/ufo.png')"
+                    this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufo+"')"
                     this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
                     break;
                 case 'beam':
-                    this.shipElement.style.backgroundImage = "url('./assets/ufo-raw.png')"
+                    this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufoIdle+"')"
                     this.shipElement.style.transform = 'scale(1) rotate(0)';
                     break;
             }
