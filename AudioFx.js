@@ -1,27 +1,37 @@
+import SoundPlayer from "./Sound.js";
+
 export default class AudioFx{
     constructor(name) {
         this.name = name;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audio = new AudioContext();
+        this.player = new SoundPlayer(audio)
+        this.trueAudio = false;
         switch(name){
+
             case 'flying':
-                this.fileName = './assets/158866__stoltingmediagroup__futuresoundfx-740.mp3';
+                this.sequence = [440.0, 0.1, "sine"];
                 break;
             case 'beam':
-                this.fileName = './assets/169991__peepholecircus__laser-beam.mp3';
+                this.sequence = [261.626, 0.1, "sine"];
                 break;
             case 'refuel':
-                this.fileName = './assets/214049__taira-komori__strange-beam.mp3';
+                this.sequence = [200.0, 0.1, "sine"];
                 break;
             default:
+                this.trueAudio = true;
                 this.fileName = './assets/AnalogueCabin - Noir Et Blanc Vie.mp3';
+                this.audioContainer = document.getElementById('audios');
+                this.audioElement = document.createElement('audio');
+                this.audioElement.volume = .5;
+                this.audioElement.loop = true;
+                this.audioElement.preload;
+                this.audioElement.src = this.fileName;
+                this.audioContainer.appendChild(this.audioElement);
+                this.isPlaying = false;
+                break;
         }
-        this.audioContainer = document.getElementById('audios');
-        this.audioElement = document.createElement('audio');
-        this.audioElement.volume = .5;
-        this.audioElement.loop = true;
-        this.audioElement.preload;
-        this.audioElement.src = this.fileName;
-        this.audioContainer.appendChild(this.audioElement);
-        this.isPlaying = false;
+
     }
     playMusic(){
         if(!this.isPlaying && global.music){
@@ -29,6 +39,14 @@ export default class AudioFx{
             this.isPlaying = true;
         }
     }
+    play(duration=null){
+        if(duration){
+            this.player.play(...this.sequence).stop(duration)
+        } else {
+            this.player.play(...this.sequence)
+        }
+    }
+
     start() {
         if(!this.isPlaying && global.soundFx){
             this.audioElement.play();

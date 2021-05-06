@@ -8,14 +8,28 @@ export default class SpaceStation{
     #coords;
     #modules;
     #moduleRequirements;
+    #stats;
+    #lastTotal=0;
+    #level=0;
+    #shield;
+    #impactCounter;
     constructor() {
         const rnd = new Random();
-        this.#coords = [rnd.rnd(30,70),rnd.rnd(30,70)];
+        this.#coords = [rnd.rnd(30,60),rnd.rnd(30,60)];
         this.#fuelTank = 1000;
+        this.#shield = 100;
+        this.#impactCounter = 1;
         this.hud = null;
         this.#modules = {
             cargoModule: 0,
             beamerModule: 0
+        }
+        this.#stats = {
+            shipsBuilt: 0,
+            waterMined:0,
+            ironMined:0,
+            o3Mined:0,
+            modulesBuilt:0,
         }
         this.#moduleRequirements = {
             cargoModule: {
@@ -41,7 +55,15 @@ export default class SpaceStation{
             refinedFuel: function(){},
             builtModule: function (){}
         }
+        setInterval(()=>{
+            const total = this.#stats.waterMined + this.#stats.ironMined + this.#stats.o3Mined;
+            this.#level = total - this.#lastTotal;
+            this.#lastTotal = total;
+        },60000)
         this.init();
+    }
+    getLevel(){
+        return this.#level;
     }
     getFuelTank(){
         return this.#fuelTank;
@@ -58,14 +80,66 @@ export default class SpaceStation{
     getModuleRequirements(){
         return this.#moduleRequirements;
     }
+    getStats(){
+        return this.#stats;
+    }
+    getShield(){
+        return this.#shield;
+    }
+    getCoolingCost(){
+        if(this.#impactCounter<3){
+            return 3000;
+        }
+        return Math.log2(this.#impactCounter/3) * 3000;
+    }
     init(){
         if(this.hud){
             return;
         }
         this.stationElement = document.createElement('div');
-        this.stationElement.className = 'position-absolute station';
+        this.stationElement.className = 'position-absolute station healthy';
+        this.stationElement.appendChild(document.createElement('div'))
         this.stationElement.style.left = this.#coords[0]+'%';
         this.stationElement.style.top = this.#coords[1]+'%';
+    }
+    cheat(){
+        if(location.hostname === "localhost"){
+            this.#modules.cargoModule = 50;
+            this.#modules.beamerModule = 50;
+            this.#resources.o3 = 100000;
+            this.#resources.iron = 100000;
+            this.#resources.water = 100000;
+            this.#fuelTank = 100000;
+        }
+    }
+    receiveRadiation(amount){
+        if(isNaN(amount)){
+            amount = 100;
+        }
+        if(this.#level>2500){
+            const impact = Math.abs(Number(amount));
+            this.#shield = this.#shield - (impact * Math.log(this.#impactCounter));
+            this.#impactCounter++;
+        }
+
+    }
+    cool(){
+        return new Promise((resolve, reject) => {
+            const cost = this.getCoolingCost();
+            if(this.#resources.water < cost){
+                reject('not enough water to cool')
+                return;
+            }
+            this.#resources.water -= cost;
+            setTimeout(()=>{
+                this.#shield++;
+                if(this.#shield>100){
+                    this.#shield = 100;
+                }
+                resolve('cooled')
+            }, cost);
+
+        })
     }
     equip(ship, moduleString){
         return new Promise((resolve, reject) => {
@@ -103,6 +177,7 @@ export default class SpaceStation{
                     return;
                 }
                 this.#resources[ship.getCargo().type] += ship.getCargo().amount;
+                this.#stats[ship.getCargo().type+'Mined'] += ship.getCargo().amount;
                 ship.resetCargo();
                 this.events.cargoAccepted(this);
                 resolve('cargoAccepted')
@@ -126,6 +201,7 @@ export default class SpaceStation{
             })
             setTimeout(()=>{
                 this.#modules[moduleString]++;
+                this.#stats.modulesBuilt++;
                 this.events.builtModule(this.getModules())
                 resolve(this.getModules())
             }, 25000)
@@ -147,6 +223,7 @@ export default class SpaceStation{
                 const dispatch = new GameEvent('newShip',newShip);
                 this.events.builtShip(newShip);
                 this.hud.dispatchEvent(dispatch);
+                this.#stats.shipsBuilt++
                 resolve(newShip)
             }, 30000)
         })
@@ -175,7 +252,6 @@ export default class SpaceStation{
         return new Promise((resolve,reject)=>{
             setTimeout(()=>{
                 if(!Helper.proximity(ship,this) || this.#fuelTank < 1){
-                    console.log('rejected')
                     reject(false);
                     return;
                 }

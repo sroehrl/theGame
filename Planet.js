@@ -11,6 +11,7 @@ export default class Planet{
         this.#pressure = rand.rnd(10000, 500000);
         this.#coords = position;
         this.element = document.createElement('div');
+        this.element.innerHTML = '<div class="wrap"><div class="background"></div><div class="clouds"></div></div><div class="mask"></div>'
         this.element.style.left = position[0]+'%';
         this.element.style.top = position[1]+'%';
         this.element.className = `position-absolute planet ${this.#type}`;
