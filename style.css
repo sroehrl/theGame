@@ -1,50 +1,184 @@
-html,body{
+html, body {
     height: 100%;
 }
-body{
+
+body {
     background-image: url("./assets/pexels-kai-pilger-1341279.jpg");
     background-size: cover;
     font-family: 'Cutive Mono', monospace;
 }
-.sun{
+
+.sun {
     cursor: pointer;
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    background: radial-gradient(#ffffff, rgba(255,255,255,.9) 30px, transparent 100px);
+    background: radial-gradient(#ffffff, rgba(255, 255, 255, .9) 30px, transparent 100px);
     box-shadow: 0 0 40px 20px #ff8075;
 }
 
-.planet{
+.planet {
     cursor: pointer;
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    /*border: 3px dotted #ccc;*/
+    transform-style: preserve-3d;
 }
-.planet.water{
-    background: radial-gradient(circle, #3a3aff 0%, #5a5afd 100%);
-    /*background: #7f7fdc;*/
+
+.planet .wrap {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    border-radius: 50%;
+    overflow: hidden;
 }
-.planet.iron{
-    background: radial-gradient(circle, #740000 50%, rgba(252, 86, 86, 0.5) 100%);
+
+.planet .background {
+    background-size: cover;
+    background-repeat: repeat-x;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    border-radius: 50%;
 }
-.planet.o3{
+
+.planet .clouds {
+    background-size: cover;
+    background-repeat: repeat-x;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.planet .mask {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 50%;
+}
+
+.planet.water {
+    background: blue;
+    box-shadow: 0 0 16px -20px rgba(255, 255, 255, 0.72), -14px -15px 40px -10px rgba(111, 143, 255, 0.23);
+}
+
+.planet.water .wrap {
+    animation: rotatePlanet 1500s infinite linear;
+}
+
+.planet.water .background {
+    animation: translateBackground 1000s infinite linear;
+    background-image: url(http://artem.anmedio.ru/dev/planet/mars.jpg);
+    filter: hue-rotate(180deg) invert(25%) saturate(4.5);
+}
+
+.planet.water .clouds {
+    animation: translateBackground 1200s infinite linear;
+    background-image: url(http://artem.anmedio.ru/dev/planet/clouds.png);
+    opacity: 0.4;
+}
+
+.planet.water .mask {
+    box-shadow: inset -10px -10px 40px #031525, inset 10px 10px 30px -10px rgba(159, 217, 255, 0.6);
+}
+
+.planet.iron {
+    background: black;
+    box-shadow: 0 0 16px -20px rgba(255, 255, 255, 0.27), -4px -5px 40px -10px rgba(205, 38, 38, 0.73);
+    transform: rotateZ(-20deg);
+}
+
+.planet.iron .wrap {
+    background: linear-gradient(194deg, rgba(71, 0, 19, 1) 0%, rgb(122 32 33) 9%, rgb(199 0 5) 17%, rgb(99 0 18) 35%, rgba(171, 67, 0, 1) 48%, rgb(194 58 6) 49%, rgba(83, 27, 3, 1) 55%, rgba(120, 32, 54, 1) 61%, rgba(96, 6, 30, 1) 69%, rgba(150, 19, 53, 1) 77%, rgba(117, 11, 39, 1) 86%, rgba(115, 10, 38, 1) 91%, rgba(65, 0, 17, 1) 100%);
+    transform: rotateZ(-13deg);
+}
+
+.planet.iron .background {
+    animation: translateBackground 700s infinite linear;
+    background-image: url(http://artem.anmedio.ru/dev/planet/mars.jpg);
+    filter: hue-rotate(18deg) invert(5%) saturate(8);
+    transform: rotateZ(13deg);
+    opacity: 0.33;
+}
+
+.planet.iron .clouds {
+    animation: translateBackground 800s infinite linear;
+    background-image: url(http://artem.anmedio.ru/dev/planet/clouds.png);
+    filter: sepia(1) hue-rotate(130deg) invert(80%) saturate(4);
+    opacity: 0.8;
+    transform: rotateZ(13deg);
+}
+
+.planet.iron .mask {
+    box-shadow: inset -10px -10px 40px #250303, inset 10px 10px 30px -10px rgba(255, 159, 159, 0.6);
+}
+
+.planet.iron:before, .planet.iron:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    background: transparent;
+    border-radius: 50%;
+    border: 30px solid rgba(71, 0, 19, .8);
+    transform: rotateX(75deg);
+    width: 150px;
+    height: 150px;
+    z-index: 999;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: -55px;
+}
+
+.planet.iron:after {
+    border: 3px solid rgba(226, 37, 24, .7);
+    width: 215px;
+    height: 220px;
+    z-index: 999;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: -60px;
+}
+
+
+.planet.o3 {
     background: radial-gradient(circle, #bd49db 10%, rgba(251,251,251,0) 100%);
     box-shadow: 0 0 5px 4px #BD49DBFF;
+    transform: rotate(123deg);
 }
-:root{
+
+.planet.o3 .wrap {
+    animation: rotatePlanet 900s infinite linear;
+}
+
+.planet.o3 .background {
+    animation: translateBackground 700s infinite linear;
+    transform: rotate(123deg);
+}
+
+.planet.o3 .clouds {
+    animation: translateBackground 250s infinite linear;
+    background-image: url(http://artem.anmedio.ru/dev/planet/clouds.png);
+    filter: sepia(1) hue-rotate(240deg) saturate(3);
+    opacity: 0.17;
+    transform: rotate(123deg);
+}
+
+:root {
     --barWidth: 20px;
 }
 
-.bar{
+.bar {
     cursor: pointer;
     width: var(--barWidth);
     height: 25px;
     outline: black dotted 1px;
     background: #228b8b;
 }
-.dot{
+
+.dot {
     cursor: pointer;
     width: 10px;
     height: 10px;
@@ -52,7 +186,8 @@ body{
     border-radius: 50%;
     transition: all linear 300ms;
 }
-.ship{
+
+.ship {
     cursor: pointer;
     width: 25px;
     height: 25px;
@@ -60,40 +195,62 @@ body{
     background-repeat: no-repeat;
     transition: all linear 300ms;
 }
-.station{
+
+.station {
     cursor: pointer;
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background-image: radial-gradient(transparent 50%,#2097FDFF 80%);
+    background-image: radial-gradient(transparent 50%, #2097FDFF 80%);
     background-size: contain;
     background-repeat: no-repeat;
 }
-.station.healthy{
+
+.station.healthy {
     box-shadow: 0 0 5px 7px #2097fd;
 }
-.station>div{
+
+.station > div {
     width: 50px;
     height: 50px;
     margin: 10px;
-    background-image: url("./assets/RD1.png");
+    background-image: url("https://i.ibb.co/VJ3pCxb/space-station.png");
     background-size: contain;
     background-position: center;
 }
-progress[value]{
+
+progress[value] {
     -webkit-appearance: none;
     appearance: none;
 }
+
 progress[value]::-webkit-progress-value {
-    background-image:
-            -webkit-linear-gradient(-45deg,
-            transparent 33%, rgba(0, 0, 0, .1) 33%,
-            rgba(0,0, 0, .1) 66%, transparent 66%),
-            -webkit-linear-gradient(top,
+    background-image: -webkit-linear-gradient(-45deg,
+    transparent 33%, rgba(0, 0, 0, .1) 33%,
+    rgba(0, 0, 0, .1) 66%, transparent 66%),
+    -webkit-linear-gradient(top,
             rgba(255, 255, 255, .25),
             rgba(0, 0, 0, .25)),
-            -webkit-linear-gradient(left,#f44, #09c);
+    -webkit-linear-gradient(left, #f44, #09c);
 
     border-radius: 2px;
     background-size: 35px 20px, 100% 100%, 100% 100%;
+}
+
+@keyframes translateBackground {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: -600px;
+    }
+}
+
+@keyframes rotatePlanet {
+    0% {
+        transform: rotateZ(0);
+    }
+    100% {
+        transform: rotateZ(-360deg);
+    }
 }
