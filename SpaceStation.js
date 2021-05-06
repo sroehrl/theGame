@@ -10,6 +10,7 @@ export default class SpaceStation{
     #moduleRequirements;
     #stats;
     #lastTotal=0;
+    #level=0;
     #shield;
     #impactCounter;
     constructor() {
@@ -56,12 +57,13 @@ export default class SpaceStation{
         }
         setInterval(()=>{
             const total = this.#stats.waterMined + this.#stats.ironMined + this.#stats.o3Mined;
-            this.#lastTotal = total - this.#lastTotal;
+            this.#level = total - this.#lastTotal;
+            this.#lastTotal = total;
         },60000)
         this.init();
     }
     getLevel(){
-        return this.#lastTotal;
+        return this.#level;
     }
     getFuelTank(){
         return this.#fuelTank;
@@ -114,7 +116,7 @@ export default class SpaceStation{
         if(isNaN(amount)){
             amount = 100;
         }
-        if(this.#lastTotal>1){
+        if(this.#level>2500){
             const impact = Math.abs(Number(amount));
             this.#shield = this.#shield - (impact * Math.log(this.#impactCounter));
             this.#impactCounter++;

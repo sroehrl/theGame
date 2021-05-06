@@ -119,7 +119,6 @@ export default class Ship{
                 break;
             default:
                 this.shipElement.className = 'position-absolute ship';
-                this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufoIdle+"')"
         }
 
         this.updatePosition();
@@ -230,12 +229,10 @@ export default class Ship{
         if(this.mode === 'default'){
             switch (change){
                 case 'idle':
-                    this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufo+"')"
-                    this.shipElement.style.transform = 'scale(1.5) rotate(-40deg)';
+                    this.shipElement.classList.add('beam');
                     break;
                 case 'beam':
-                    this.shipElement.style.backgroundImage = "url('"+Helper.assets.ufoIdle+"')"
-                    this.shipElement.style.transform = 'scale(1) rotate(0)';
+                    this.shipElement.classList.remove('beam');
                     break;
             }
         }

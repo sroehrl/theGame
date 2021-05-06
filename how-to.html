@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
+    <script src="howTo.js"></script>
     <style>
         a {
             color: white;
@@ -59,7 +60,7 @@
         <div><strong>Description</strong></div>
         <p>starShips</p>
         <p>
-            Array of available <a href="#spaceship">spaceShips</a> (you are starting with one)
+            Array of available <a href="#starShip">starShips</a> (you are starting with one)
         </p>
         <p>spaceStation</p>
         <p>
@@ -71,146 +72,41 @@
             Array of available <a href="#planet">planets</a>. This is where you mine resources.
         </p>
     </div>
-    <h2 id="spaceship">spaceShip</h2>
-    <p>A spaceShip requires fuel to do its duty! Make sure to supply it with enough before sending into into space.</p>
-    <div class="grid-4-4-4">
-        <div><strong>Method</strong></div>
-        <div><strong>Timing</strong></div>
-        <div><strong>Arguments</strong></div>
-        <p>getPosition()</p>
-        <p>synchronous</p>
-        <p>returns current coordinates as an array with two values</p>
-        <p>getFuel()</p>
-        <p>synchronous</p>
-        <p>returns current fuel-level of ship</p>
-        <p>getCoolingCost()</p>
-        <p>synchronous</p>
-        <p>returns units of water currently needed to cool the station's shields by 1%</p>
-        <p>cool()</p>
-        <p>asynchronous</p>
-        <p>cools the shields down by 1% (requires needed amount in milliseconds)</p>
-        <p>getCargo()</p>
-        <p>synchronous</p>
-        <p>returns an object (e.g. {type: 'water', amount: 300}) indicating current cargo</p>
-        <p>setBurnRate(num)</p>
-        <p>synchronous</p>
-        <p>Default/Minimum:1, Max: 10. Sets a ship's fuel burn rate. You are in space, so efficiency penalties aren't that high.</p>
-        <p>setDestination(x,y)</p>
-        <p>synchronous</p>
-        <p>sets autopilot to coordinates (does not start flight!)</p>
-        <p>addBeamStrength()</p>
-        <p>asynchronous / void</p>
-        <p>equips the ship with a beamerModule to enhance efficiency. Ship needs to be in hangar. When this operations fails, your beamer might break! </p>
-        <p>addCapacity()</p>
-        <p>asynchronous / void</p>
-        <p>equips the ship with a cargoModule to enhance efficiency. Ship needs to be in hangar. When this operations fails, your cargo capacity is reset! </p>
-        <p>extract(planet)</p>
-        <p>asynchronous (depending on pressure)</p>
-        <p>expects an instance of a planet and mines its resource</p>
-        <p>unload(entity)</p>
-        <p>asynchronous (depending on various factors)</p>
-        <p>You can unload at the station, other ships or planets. Cargo dumped at a planet will be lost and other ships
-            might have limited capacity! Example: starShips[0].unload(spaceStation)</p>
-        <p>fly()</p>
-        <p>void (time depending on distance)</p>
-        <p>Executes the autopilot and flies to defined destination.</p>
-        <p>refuel()</p>
-        <p>asynchronous (depending on amount refueling)</p>
-        <p>Requires an entity able of refueling (e.g. ship.refuel(spaceStation))</p>
-        <div><strong>Event</strong></div>
-        <div><strong>Returns</strong></div>
-        <div><strong>Description</strong></div>
-        <p>idle</p>
-        <p>instance</p>
-        <p>Fired when ship is not moving (anymore)</p>
-        <p>arrived</p>
-        <p>instance</p>
-        <p>Fired when destination is reached</p>
-        <p>cargoAccepted</p>
-        <p>instance</p>
-        <p>Fired when cargo was successfully received (by another ship, not through mining)</p>
-        <p>isMining</p>
-        <p>instance</p>
-        <p>Fired when ship started extracting</p>
-    </div>
-    <h2 id="spaceStation">spaceStation</h2>
-    <p>At the center of your operation is your space station. Located between three planets of interest, this is where
-        things come together.</p>
-    <div class="grid-4-4-4">
-        <div><strong>Method</strong></div>
-        <div><strong>Timing</strong></div>
-        <div><strong>Arguments</strong></div>
-        <p>getFuelTank()</p>
-        <p>synchronous</p>
-        <p>Returns the amount of fuel stored. As the station has external tanks, the capacity is virtually
-            unlimited.</p>
-        <p>getCoords()</p>
-        <p>synchronous</p>
-        <p>Returns the coordinates as an array of two values.</p>
-        <p>getResources()</p>
-        <p>synchronous</p>
-        <p>Returns an object showing current resource levels (e.g. {water:50, o3:100, iron:111})</p>
-        <p>getModules()</p>
-        <p>synchronous</p>
-        <p>Returns the station's stored modules</p>
-        <p>getModuleRequirements()</p>
-        <p>synchronous</p>
-        <p>Returns the requirements to build modules. <strong>Depends on the system!</strong></p>
-        <p>buildShip()</p>
-        <p>asynchronous / 30 seconds</p>
-        <p>
-            Builds a ship and places it in its hangar. This requires: <br>
-            fuel: 500 <br>
-            o3: 500 <br>
-            water: 1000 <br>
-            iron: 5000 <br>
-            If any of the prerequisites aren't met, the built fails.
-        </p>
-        <p>buildModule()</p>
-        <p>asynchronous / 25 seconds</p>
-        <p>
-            Builds a module and places it in its hangar. The requirements can be get through "getModuleRequirements()":
-            <br>
-            If any of the prerequisites aren't met, the built fails.
-        </p>
-        <p>refineFuel()</p>
-        <p>asynchronous / depending on amount of o3</p>
-        <p>It requires 2.2 o3 to refine one unit of fuel. Needless to say, this will be your biggest challenge.</p>
-        <div><strong>Event</strong></div>
-        <div><strong>Returns</strong></div>
-        <div><strong>Description</strong></div>
-        <p>cargoAccepted</p>
-        <p>instance</p>
-        <p>Fired when a ship unloaded cargo successfully.</p>
-        <p>builtShip</p>
-        <p>new starShip instance</p>
-        <p>Fired when a ship was successfully built. Caution: The new ship is already placed in the global starShips-array. Don't add it again!</p>
-        <p>builtModule</p>
-        <p>stored Modules</p>
-        <p>Fired when a module was successfully built. In order to equip a ship, you must invoke the ship's methods accordingly</p>
-        <p>refinedFuel</p>
-        <p>instance</p>
-        <p>Fired when o3 was converted to fuel.</p>
-    </div>
-    <h2 id="planet">planet</h2>
-    <p>There are three planets in your area. They contain water, iron and o3. Mining them will keep you afloat.</p>
-    <div class="grid-4-4-4">
-        <div><strong>Method</strong></div>
-        <div><strong>Timing</strong></div>
-        <div><strong>Arguments</strong></div>
-        <p>getCoords()</p>
-        <p>synchronous</p>
-        <p>Returns coordinates as an array with two values.</p>
-        <div><strong>Event</strong></div>
-        <div><strong>Returns</strong></div>
-        <div><strong>Description</strong></div>
-        <p>cargoAccepted</p>
-        <p>instance</p>
-        <p>Fired when a ship dumped cargo. Other than the ship loosing its cargo, this has no effect on the planet.</p>
-        <p>mined</p>
-        <p>instance of mining entity (ship)!</p>
-        <p>Fired when a beam successfully extracted resources until the cargo bay was full.</p>
-    </div>
+
+    <div id="instructions"></div>
 </div>
+<script>
+    const instructionContainer = document.getElementById('instructions');
+    Object.keys(instructions).forEach(entityName => {
+        const {methods, events, description} = instructions[entityName]
+        instructionContainer.innerHTML += renderEntity(entityName,description,methods,events)
+    })
+    function renderEntity(name, description, methods, events){
+        return `
+        <h2 id="${name}">${name}</h2>
+        <p>${description}</p>
+        <div class="grid-4-4-4">
+        <div><strong>Method</strong></div>
+        <div><strong>Timing</strong></div>
+        <div><strong>description</strong></div>
+        ${renderRows(methods,['name','timing','description'])}
+        <div><strong>Event</strong></div>
+        <div><strong>Returns</strong></div>
+        <div><strong>Description</strong></div>
+        ${renderRows(events,['name','returns','description'])}
+        </div>
+        `
+    }
+
+    function renderRows(methods, fieldArray){
+        if(typeof methods === 'undefined'){
+            return '';
+        }
+        methods.sort((a,b) => a.name < b.name ? -1 : 1)
+        return methods.map(method => fieldArray.map(field => (`<p>${method[field]}</p>`)).join('')).join('')
+
+    }
+
+</script>
 </body>
 </html>

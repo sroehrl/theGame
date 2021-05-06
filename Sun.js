@@ -5,7 +5,7 @@ export default class Sun{
     #position;
     #spaceStation;
     constructor(position, spaceStation) {
-        this.#intensity = 0.1;
+        this.#intensity = 0.01;
         this.#spaceStation = spaceStation;
         this.element = document.createElement('div');
         this.element.className = 'position-absolute sun';

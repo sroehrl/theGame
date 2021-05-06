@@ -60,7 +60,7 @@ class Game {
             planet.registerListener(this.control)
             this.planets.push(planet)
         });
-        this.sun = new Sun(this.random.planetPosition(), this.spaceStation);
+        this.sun = new Sun([2,2], this.spaceStation);
         this.sun.registerListener(this.control);
 
         this.spaceStation.registerListener(this.control);
@@ -94,6 +94,7 @@ class Game {
                         <p>This sun is unstable. The last sun-flare destroyed your uncle's business.</p>
                         <p>You have a shield against that, but depending on the sun's intensity, it will deplete faster and faster!</p>
                         <h3>Intensity: ${detail.getIntensity().toFixed(2)}</h3>  
+                        <p>Your station will have a shield indicator once a certain threshold is met. Cooling the shiled down will require water (and the right method!).</p>
                     `;
                     break;
                 case 'ship':
@@ -124,7 +125,7 @@ class Game {
                     `;
                     break;
                 case 'station':
-                    const total = detail.getLevel();
+                    const totalResources = detail.getStats().o3 + detail.getStats().water + detail.getStats().iron;
                     this.control.innerHTML = `
                     <h3>Space Station</h3>
                     ${detail.getShield() < 100 ? (
@@ -145,7 +146,7 @@ class Game {
                         <p>Beamer Modules:${detail.getModules().beamerModule}</p>
                         <p>Cargo Modules:${detail.getModules().cargoModule}</p>
                     </div>
-                    <p>Resources mined: ${(total).toFixed(1)}</p>
+                    <p>Resources mined: ${(totalResources).toFixed(1)}</p>
                     <p>Ships built: ${detail.getStats().shipsBuilt}</p>
                     <h4>Level: <br> ${detail.getLevel().toFixed(1)} resources/min</h4>
                     `;
