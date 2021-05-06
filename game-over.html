@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/theme/ayu-dark.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="m-t-5 bg-black-50 text-white p-2">
+    <h1>Game over</h1>
+    <p>
+      <a href="https://github.com/sroehrl/theGame" class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Star this game @ GitHub</a>
+      <a href="index.html" class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Play again</a>
+    </p>
+    <canvas id="chart"></canvas>
+  </div>
+</div>
+<script>
+  const lastRun = JSON.parse(localStorage.lastRun);
+  const data = {
+    labels: [],
+    datasets:null
+  }
+  lastRun.forEach((minute,i) =>{
+    data.labels.push(minute.minute);
+    if(!data.datasets){
+      data.datasets = [
+        {
+          label: 'Resources / min',
+          fill: false,
+          backgroundColor: 'rgb(140,255,61)',
+          borderColor: 'rgb(104,245,71)',
+          yAxisID: 'y',
+          data:[]
+        },
+        {
+          label: 'Ships',
+          fill: false,
+          backgroundColor: 'rgb(41,76,253)',
+          borderColor: 'blue',
+          yAxisID: 'y1',
+          data:[]
+        },
+        {
+          label: 'Shield',
+          fill: true,
+          yAxisID: 'y2',
+          backgroundColor: 'rgb(208,34,227)',
+          borderColor: 'red',
+          data:[]
+        }
+      ]
+    }
+    data.datasets[0].data.push(minute.resourceLevel)
+    data.datasets[1].data.push(minute.ships)
+    data.datasets[2].data.push(minute.shield)
+  })
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Last Run: ' + lastRun.length + ' Minutes!'
+        },
+      },
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Minute'
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Resource / min'
+          }
+        },
+        y1: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Ships built'
+          }
+        },
+        y2: {
+          display: true,
+          position: 'right',
+          title: {
+            display: true,
+            text: 'Shield'
+          }
+        }
+      }
+    },
+  };
+  const chart = new Chart(document.getElementById('chart'),config)
+</script>
+</body>
+</html>

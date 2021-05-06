@@ -15,11 +15,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
 </head>
 <body class="bg-black text-white">
-    <div class="grid-9-3 h-75p">
+    <div class="grid-8-4 h-75p">
         <section class="position-relative" id="game" style="overflow: auto">
             <button class="w-25p place-x-center" id="startGame">start</button>
         </section>
-        <div class="p-2 bg-black-50 m-t-2">
+        <div class="p-2 bg-black-50 m-t-2 h-90p" style="overflow-y: auto" >
             <a class="cursor-pointer p-x-3 p-y-1 b-1 b-rounded-2 b-primary bg-transparent text-white hover:bg-primary" href="https://github.com/sroehrl/theGame#readme">Github</a>
             <a class="cursor-pointer p-x-3 p-y-1 b-1 b-rounded-2 b-primary bg-transparent text-white hover:bg-primary" href="how-to.html">Instructions</a>
             <article id="control">
@@ -63,6 +63,9 @@
         },250))
     </script>
     <script>
+        document.getElementById('startGame').addEventListener('click', ev => {
+            applyCode('', false)
+        })
         const logger = function (print){
             let text = print.toString();
             if(text === '[object Object]'){
@@ -162,7 +165,7 @@
             `;
             document.body.appendChild(nSr)
         }
-        applyCode('', false)
+        // applyCode('', false)
 
     </script>
 

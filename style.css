@@ -6,6 +6,15 @@ body{
     background-size: cover;
     font-family: 'Cutive Mono', monospace;
 }
+.sun{
+    cursor: pointer;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(#ffffff, rgba(255,255,255,.9) 30px, transparent 100px);
+    box-shadow: 0 0 40px 20px #ff8075;
+}
+
 .planet{
     cursor: pointer;
     width: 100px;
@@ -21,7 +30,8 @@ body{
     background: radial-gradient(circle, #740000 50%, rgba(252, 86, 86, 0.5) 100%);
 }
 .planet.o3{
-    background: radial-gradient(circle, #bd49db 0%, rgba(251,251,251,0) 100%);
+    background: radial-gradient(circle, #bd49db 10%, rgba(251,251,251,0) 100%);
+    box-shadow: 0 0 5px 4px #BD49DBFF;
 }
 :root{
     --barWidth: 20px;
@@ -52,9 +62,38 @@ body{
 }
 .station{
     cursor: pointer;
-    width: 60px;
-    height: 60px;
-    background-image: url("./assets/RD1.png");
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-image: radial-gradient(transparent 50%,#2097FDFF 80%);
     background-size: contain;
     background-repeat: no-repeat;
+}
+.station.healthy{
+    box-shadow: 0 0 5px 7px #2097fd;
+}
+.station>div{
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+    background-image: url("./assets/RD1.png");
+    background-size: contain;
+    background-position: center;
+}
+progress[value]{
+    -webkit-appearance: none;
+    appearance: none;
+}
+progress[value]::-webkit-progress-value {
+    background-image:
+            -webkit-linear-gradient(-45deg,
+            transparent 33%, rgba(0, 0, 0, .1) 33%,
+            rgba(0,0, 0, .1) 66%, transparent 66%),
+            -webkit-linear-gradient(top,
+            rgba(255, 255, 255, .25),
+            rgba(0, 0, 0, .25)),
+            -webkit-linear-gradient(left,#f44, #09c);
+
+    border-radius: 2px;
+    background-size: 35px 20px, 100% 100%, 100% 100%;
 }
