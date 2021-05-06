@@ -125,7 +125,7 @@ class Game {
                     `;
                     break;
                 case 'station':
-                    const totalResources = detail.getStats().o3 + detail.getStats().water + detail.getStats().iron;
+                    const totalResources = detail.getStats().o3Mined + detail.getStats().waterMined + detail.getStats().ironMined;
                     this.control.innerHTML = `
                     <h3>Space Station</h3>
                     ${detail.getShield() < 100 ? (
