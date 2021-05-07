@@ -86,6 +86,7 @@ class Game {
 
     controlDetails(template, detail) {
         clearInterval(this.hudInterval)
+        let intervalLength = 60000;
         const display = () => {
             switch (template) {
                 case 'sun':
@@ -98,6 +99,7 @@ class Game {
                     `;
                     break;
                 case 'ship':
+                    intervalLength = 1000;
                     this.control.innerHTML = `
                     <h3>Ship ${detail.name}</h3>
                     <p>Fuel: ${detail.getFuel()}</p>
@@ -117,14 +119,25 @@ class Game {
                     `;
                     break;
                 case 'planet':
+                    const planet = detail.element.cloneNode(true);
+                    planet.classList.remove('position-absolute')
+                    planet.classList.add('position-relative')
+                   /* planet.style.marginTop = '20%';
+                    planet.style.marginLeft = 'calc(50% - 150px)';*/
+                    planet.style.transform = 'scale(1.5) rotateZ(-20deg)';
+                    planet.style.left = '0';
+                    planet.style.rigth = '0';
+                    planet.style.margin = '50px auto 0';
                     this.control.innerHTML = `
                     <h3>Planet</h3>
                     <p>Type: ${detail.getType()}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <p>Pressure: ${numeral(detail.getPressure()).format('00a')}</p>
                     `;
+                    this.control.appendChild(planet)
                     break;
                 case 'station':
+                    intervalLength = 1000;
                     const totalResources = detail.getStats().o3Mined + detail.getStats().waterMined + detail.getStats().ironMined;
                     this.control.innerHTML = `
                     <h3>Space Station</h3>
@@ -162,7 +175,7 @@ class Game {
         }
         this.hudInterval = setInterval(() => {
             display();
-        }, 1000)
+        }, intervalLength)
         display()
 
     }
