@@ -3,7 +3,7 @@ export default class Random{
         this.planetPositions = [];
     }
     planetPosition(){
-        const pos = [this.rnd(15,70),this.rnd(15,70)];
+        const pos = [this.rnd(15,60),this.rnd(15,60)];
         let positionOk = true;
         this.planetPositions.forEach(coords =>{
             if(Math.abs(pos[0]-coords[0]) < 11 || Math.abs(pos[1]-coords[1]) < 11){
