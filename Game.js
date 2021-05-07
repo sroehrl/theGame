@@ -121,7 +121,7 @@ class Game {
                     <h3>Planet</h3>
                     <p>Type: ${detail.getType()}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
-                    <p>Pressure: ${detail.getPressure()}</p>
+                    <p>Pressure: ${numeral(detail.getPressure()).format('00a')}</p>
                     `;
                     break;
                 case 'station':
@@ -132,23 +132,28 @@ class Game {
                         `<div class="p-2 b-rounded b-white b-1">
                             <p>Shield: ${detail.getShield().toFixed(1)}%</p>
                             <progress value="${detail.getShield()}" max="100"></progress>
-                            <p>Water to cool 1%: ${detail.getCoolingCost().toFixed(2)}</p>
+                            <p>Water to cool 1%: ${numeral(detail.getCoolingCost()).format('000.0a')}</p>
                         </div>`
                     ) : ''}
                     
                     
-                    <p>FuelTank: ${detail.getFuelTank()}</p>
+                    <p class="font-strong">FuelTank: ${numeral(detail.getFuelTank()).format('00.00a')}</p>
                     <p>Coordinates: ${this.system}-${detail.getCoords()[0]} | ${this.system}-${detail.getCoords()[1]}</p>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
-                        <p>Water:${detail.getResources().water.toFixed(0)}</p>
-                        <p>Iron:${detail.getResources().iron.toFixed(0)}</p>
-                        <p>O3:${detail.getResources().o3.toFixed(0)}</p>
+                        <div class="grid-6-6">
+                            <p>Water</p>
+                            <p>${numeral(detail.getResources().water).format('000.0a')}</p>
+                            <p>Iron</p>
+                            <p>${numeral(detail.getResources().iron).format('000.0a')}</p>
+                            <p>O3</p>
+                            <p>${numeral(detail.getResources().o3).format('000.0a')}</p>
+                        </div>
                         <p>Beamer Modules:${detail.getModules().beamerModule}</p>
                         <p>Cargo Modules:${detail.getModules().cargoModule}</p>
                     </div>
-                    <p>Resources mined: ${(totalResources).toFixed(1)}</p>
+                    <p>Resources mined: ${numeral(totalResources).format('000.0a')}</p>
                     <p>Ships built: ${detail.getStats().shipsBuilt}</p>
-                    <h4>Level: <br> ${detail.getLevel().toFixed(1)} resources/min</h4>
+                    <h4>Level: <br> ${numeral(detail.getLevel()).format('000.00a')} resources/min</h4>
                     `;
                     break;
                 default:

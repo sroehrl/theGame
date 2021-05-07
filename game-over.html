@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -30,11 +31,17 @@
     <p>
       You can code if:
     </p>
-    <div class="grid-3-9">
+    <div class="grid-3-6-3">
+      <div class="b-b-1 m-r-1">Metric</div>
+      <div class="b-b-1 m-r-1">Value</div>
+      <div class="b-b-1 m-r-1">You</div>
+
       <div class="b-b-1 m-r-1">Run time</div>
       <div class="b-b-1 m-r-1"> > 80 min</div>
+      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="minute"> </div>
       <div class="b-b-1 m-r-1">Ships</div>
       <div class="b-b-1 m-r-1"> > 30 </div>
+      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="ships"> </div>
       <div class="b-b-1 m-r-1">Resources/min </div>
       <div class="b-b-1 m-r-1">
         <div class="grid-6-6 p-1">
@@ -46,11 +53,21 @@
           <span> > 1 mio / min</span>
         </div>
       </div>
+      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="resourceLevel"> </div>
     </div>
   </div>
 </div>
 <script>
   const lastRun = JSON.parse(localStorage.lastRun);
+  const render = {
+    last(ele){
+      const num = numeral(lastRun[lastRun.length-1][ele.dataset.value]);
+      ele.innerHTML = num.format('0.00a')
+    }
+  }
+  document.querySelectorAll('[data-render]').forEach(ele =>{
+    render[ele.dataset.render](ele);
+  })
   const data = {
     labels: [],
     datasets:null
