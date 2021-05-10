@@ -1,160 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Game</title>
-  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/theme/ayu-dark.css">
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@latest/css/gaudiamus.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/theme/ayu-dark.css">
+    <link rel="stylesheet" href="style.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 </head>
 <body>
 <div class="container">
-  <div class="m-t-5 bg-black-50 text-white p-2">
-    <h1>Game over</h1>
-    <p>
-      <a href="https://github.com/sroehrl/theGame" class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Star this game @ GitHub</a>
-      <a href="index.html" class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Play again</a>
-    </p>
-    <p>
-      Your shield broke down due to radiation. Nature's force is inevitable, but let's see what you achieved:
-    </p>
-    <canvas id="chart"></canvas>
-    <p>
-      You can code if:
-    </p>
-    <div class="grid-3-6-3">
-      <div class="b-b-1 m-r-1">Metric</div>
-      <div class="b-b-1 m-r-1">Value</div>
-      <div class="b-b-1 m-r-1">You</div>
+    <div class="m-t-5 bg-black-50 text-white p-2">
+        <h1>Game over</h1>
+        <p>
+            <a href="https://github.com/sroehrl/theGame"
+               class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Star
+                this game @ GitHub</a>
+            <a href="index.html"
+               class="b-rounded b-1 b-primary bg-transparent text-white text-decoration-none hover:text-primary hover:raise-1-primary p-y-1 p-x-2">Play
+                again</a>
+        </p>
+        <p>
+            Your shield broke down due to radiation. Nature's force is inevitable, but let's see what you achieved:
+        </p>
+        <canvas id="chart"></canvas>
+        <p>
+            You can code if:
+        </p>
+        <div class="grid-3-6-3">
+            <div class="b-b-1 m-r-1">Metric</div>
+            <div class="b-b-1 m-r-1">Value</div>
+            <div class="b-b-1 m-r-1">You</div>
 
-      <div class="b-b-1 m-r-1">Run time</div>
-      <div class="b-b-1 m-r-1"> > 80 min</div>
-      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="minute"> </div>
-      <div class="b-b-1 m-r-1">Ships</div>
-      <div class="b-b-1 m-r-1"> > 30 </div>
-      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="ships"> </div>
-      <div class="b-b-1 m-r-1">Resources/min </div>
-      <div class="b-b-1 m-r-1">
-        <div class="grid-6-6 p-1">
-          <span>OK</span>
-          <span> > 150k / min</span>
-          <span>Good</span>
-          <span> > 500k / min</span>
-          <span>Master</span>
-          <span> > 1 mio / min</span>
+            <div class="b-b-1 m-r-1">Run time</div>
+            <div class="b-b-1 m-r-1"> > 80 min</div>
+            <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="minute"></div>
+            <div class="b-b-1 m-r-1">Ships</div>
+            <div class="b-b-1 m-r-1"> > 30</div>
+            <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="ships"></div>
+            <div class="b-b-1 m-r-1">Resources/min</div>
+            <div class="b-b-1 m-r-1">
+                <div class="grid-6-6 p-1">
+                    <span>OK</span>
+                    <span> > 150k / min</span>
+                    <span>Good</span>
+                    <span> > 500k / min</span>
+                    <span>Master</span>
+                    <span> > 1 mio / min</span>
+                </div>
+            </div>
+            <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="resourceLevel"
+                 data-format="0.00a"></div>
         </div>
-      </div>
-      <div class="b-b-1 m-r-1 font-strong" data-render="last" data-value="resourceLevel"> </div>
     </div>
-  </div>
+    <div class="p-4 m-t-3 b-1 b-primary">
+        <h3 class="text-primary font-xl">Highscore</h3>
+        <div class="grid-2-5-5 text-white font-lg" id="highscore">
+
+        </div>
+        <form id="submit" class="grid-4-4-4 m-t-3" style="display: none">
+            <p class="text-white">You made the highscore!</p>
+            <input class="bg-transparent b-0 b-b-2 b-primary font-md text-primary" type="text" name="name"
+                   placeholder="Name" required>
+            <div class="place-x-end place-y-center">
+                <button class="bg-primary text-white b-1 b-primary b-rounded-2 p-2 hover:raise-1-white cursor-pointer"
+                        type="submit">submit
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 <script>
-  const lastRun = JSON.parse(localStorage.lastRun);
-  const render = {
-    last(ele){
-      const num = numeral(lastRun[lastRun.length-1][ele.dataset.value]);
-      ele.innerHTML = num.format('0.00a')
-    }
-  }
-  document.querySelectorAll('[data-render]').forEach(ele =>{
-    render[ele.dataset.render](ele);
-  })
-  const data = {
-    labels: [],
-    datasets:null
-  }
-  lastRun.forEach((minute,i) =>{
-    data.labels.push(minute.minute);
-    if(!data.datasets){
-      data.datasets = [
-        {
-          label: 'Resources / min',
-          fill: false,
-          backgroundColor: 'rgb(140,255,61)',
-          borderColor: 'rgb(104,245,71)',
-          yAxisID: 'y',
-          data:[]
-        },
-        {
-          label: 'Ships',
-          fill: false,
-          backgroundColor: 'rgb(41,76,253)',
-          borderColor: 'blue',
-          yAxisID: 'y1',
-          data:[]
-        },
-        {
-          label: 'Shield',
-          fill: true,
-          yAxisID: 'y2',
-          backgroundColor: 'rgb(208,34,227)',
-          borderColor: 'red',
-          data:[]
+    const enterHighScore = document.getElementById('submit');
+    fetch('highscore.php')
+        .then(j => j.json())
+        .then(renderHighScore)
+
+    function renderHighScore(res) {
+        const highScoreContainer = document.getElementById('highscore');
+        highScoreContainer.innerHTML = '';
+        res.forEach((result, i) => {
+            highScoreContainer.innerHTML += `
+      <p>${i + 1}</p>
+      <p>${result.name}</p>
+      <p>${numeral(result.score).format('00.00a')}</p>
+      `
+        })
+        if (res.length < 1 || lastRun[lastRun.length - 1].resourceLevel > res[res.length - 1].score) {
+            enterHighScore.style.display = 'grid'
         }
-      ]
     }
-    data.datasets[0].data.push(minute.resourceLevel)
-    data.datasets[1].data.push(minute.ships)
-    data.datasets[2].data.push(minute.shield)
-  })
-  const config = {
-    type: 'line',
-    data: data,
-    options: {
-      responsive: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'Last Run: ' + lastRun.length + ' Minutes!'
-        },
-      },
-      interaction: {
-        mode: 'index',
-        intersect: false
-      },
-      scales: {
-        x: {
-          display: true,
-          title: {
-            display: true,
-            text: 'Minute'
-          }
-        },
-        y: {
-          display: true,
-          title: {
-            display: true,
-            text: 'Resource / min'
-          }
-        },
-        y1: {
-          display: true,
-          title: {
-            display: true,
-            text: 'Ships built'
-          }
-        },
-        y2: {
-          display: true,
-          position: 'right',
-          title: {
-            display: true,
-            text: 'Shield'
-          }
+
+    enterHighScore.addEventListener('submit', ev => {
+        ev.preventDefault();
+        fetch('highscore.php', {
+            method: 'POST',
+            contentType: 'application/json',
+            body: JSON.stringify({
+                name: ev.target.elements.name.value,
+                score: lastRun[lastRun.length - 1].resourceLevel
+            })
+        }).then(j => j.json()).then(res => {
+            renderHighScore(res);
+            enterHighScore.style.display = 'none'
+        })
+
+    })
+
+    const lastRun = JSON.parse(localStorage.lastRun);
+    const render = {
+        last(ele, format) {
+            const num = numeral(lastRun[lastRun.length - 1][ele.dataset.value]);
+            ele.innerHTML = format ? num.format(format) : num.value()
         }
-      }
-    },
-  };
-  const chart = new Chart(document.getElementById('chart'),config)
+    }
+    document.querySelectorAll('[data-render]').forEach(ele => {
+        render[ele.dataset.render](ele, ele.dataset.format);
+    })
+    const data = {
+        labels: [],
+        datasets: null
+    }
+    lastRun.forEach((minute, i) => {
+        data.labels.push(minute.minute);
+        if (!data.datasets) {
+            data.datasets = [
+                {
+                    type: 'line',
+                    label: 'Resources / min',
+                    fill: true,
+                    order: 2,
+                    backgroundColor: 'rgb(140,255,61)',
+                    borderColor: 'rgb(104,245,71)',
+                    yAxisID: 'y',
+                    data: []
+                },
+                {
+                    type: 'line',
+                    label: 'Ships',
+                    fill: false,
+                    backgroundColor: 'rgba(41,76,253,0.76)',
+                    borderColor: 'blue',
+                    yAxisID: 'y1',
+                    data: []
+                },
+                {
+                    type: 'bar',
+                    label: 'Shield',
+                    fill: true,
+                    yAxisID: 'y2',
+                    backgroundColor: 'rgba(208,34,227,0.83)',
+                    borderColor: 'red',
+                    data: []
+                },
+                {
+                    type: 'bar',
+                    label: 'Sun',
+                    yAxisID: 'y3',
+                    fill: true,
+                    backgroundColor: 'rgba(227,102,34,0.79)',
+                    borderColor: 'rgba(198,69,5,0.88)',
+                    data: []
+                }
+            ]
+        }
+        data.datasets[0].data.push(minute.resourceLevel)
+        data.datasets[1].data.push(minute.ships)
+        data.datasets[2].data.push(minute.shield)
+        data.datasets[3].data.push(minute.sun)
+    })
+    const config = {
+        // type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Last Run: ' + lastRun.length + ' Minutes!'
+                },
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Minute'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Resource / min'
+                    }
+                },
+                y1: {
+                    display: false,
+                    title: {
+                        display: true,
+                        text: 'Ships built'
+                    }
+                },
+                y2: {
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Shield'
+                    }
+                },
+                y3: {
+                    display: false,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Sun'
+                    }
+                }
+            }
+        },
+    };
+    const chart = new Chart(document.getElementById('chart'), config)
 </script>
 </body>
 </html>
