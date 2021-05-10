@@ -104,7 +104,7 @@ const config = (ele)=> ({
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    // pixelArt: true,
+    pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {
