@@ -9,17 +9,21 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/javascript/javascript.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.54.0/dist/phaser.js"></script>
+<!--    <script src="Phaser.js"></script>-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/theme/ayu-dark.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="base.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap" rel="stylesheet">
+
 </head>
 <body class="bg-black text-white">
-    <div class="grid-8-4 h-90p">
-        <section class="position-relative" id="game" style="overflow: auto">
-            <button class="w-25p place-x-center" id="startGame">start</button>
-        </section>
+<section class="position-relative" id="game" style="overflow: auto">
+</section>
+
+    <div class="grid lg:grid-8-4 h-90p">
+        <div id="phaser"></div>
         <div class="p-2 bg-black-50 m-t-2 h-90p" style="overflow-y: auto" >
             <a class="cursor-pointer p-x-3 p-y-1 b-1 b-rounded-2 b-primary bg-transparent text-white hover:bg-primary" href="https://github.com/sroehrl/theGame#readme">Github</a>
             <a class="cursor-pointer p-x-3 p-y-1 b-1 b-rounded-2 b-primary bg-transparent text-white hover:bg-primary" href="how-to.html">Instructions</a>
@@ -48,86 +52,26 @@
         </div>
 
     </div>
-    <div id="audios"></div>
+<div id="audios"></div>
+<script src="startScript.js"></script>
     <script>
         const global = {
             soundFx: false,
             music: false
         }
     </script>
-<!--    <script type="module" src="Game.js"></script>-->
+
     <script type="module" >
-        import AudioFx from "./AudioFx.js";
+        import AudioFx from "./Helpers/AudioFx.js";
         const music = new AudioFx();
         document.body.addEventListener('click', ev => setTimeout(()=>{
             music.playMusic()
         },250))
     </script>
     <script>
-        document.getElementById('startGame').addEventListener('click', ev => {
-            applyCode('', false)
-        })
-        const logger = function (print){
-            let text = print.toString();
-            if(text === '[object Object]'){
-                text = "{\n";
-                Object.keys(print).forEach(key=> {
-                    text += key + ': ' + print[key].toString() + ",\n"
-                })
-                text += '}';
-            }
-            let ele = document.createElement('p');
-            const time = ((new Date().getTime() - startTime.getTime())/1000).toFixed(2);
-            ele.innerText = time + ': ' + text;
-            const logEle = document.getElementById('logger');
-            logEle.insertBefore(ele, logEle.childNodes[0])
-        }
-        window.onerror = function(message, url, linenumber) {
-            logger("JavaScript error: " + message + " on line " +
-                linenumber + " for " + url);
-        }
-        let userCode = localStorage.myCode || "global.music = false;\n" +
-            "global.soundFx = true;\n" +
-            "\n" +
-            "const myShip = starShips[0];\n" +
-            "\n" +
-            "\n" +
-            "myShip.on(\"isMining\", ()=> logger(\"Ship tries to mine planet\"))\n" +
-            "myShip.on('arrived', ship => {\n" +
-            "  logger(\"Arrived at station: refueling\")\n" +
-            "  myShip.refuel();\n" +
-            "  \n" +
-            "})\n" +
-            "\n" +
-            "spaceStation.on(\"cargoAccepted\", ()=> logger(\"New resources at station!\"));\n" +
-            "spaceStation.on(\"refueledShip\", ()=> {\n" +
-            "  logger(\"A ship was refueled. Monitor the station's fuel tank!\")\n" +
-            "  // mineO3()\n" +
-            "});\n" +
-            "\n" +
-            "/*\n" +
-            "*  This should get us home...\n" +
-            "*/\n" +
-            "\n" +
-            "logger('Adventure started!')\n" +
-            "myShip.setDestination(...spaceStation.getCoords());\n" +
-            "myShip.fly();\n" +
-            "\n" +
-            "\n" +
-            "/*\n" +
-            "*  Try mining! Uncomment the function call in the \"refueledShip\" listener\n" +
-            "*/\n" +
-            "\n" +
-            "\n" +
-            "function mineO3(){\n" +
-            "    planets[2].on(\"mined\", () => logger(\"Planet was mined successfully\"))\n" +
-            "\tmyShip.setDestination(...planets[2].getCoords());\n" +
-            "    myShip.fly();\n" +
-            "    myShip.on(\"arrived\", () => {\n" +
-            "        logger(\"Arrived at planet, let's start mining!\")\n" +
-            "    \tmyShip.extract(planets[2])\n" +
-            "    })\n" +
-            "}";
+
+
+
         const codeMirror = new CodeMirror.fromTextArea(document.getElementById('code'),{
             mode:'javascript',
             theme: "ayu-dark",
@@ -157,12 +101,13 @@
             nSr.id = 'userJs';
             nSr.type = 'module';
             nSr.text = `
-            import {starShips, planets, spaceStation} from './Game.js';
+            import {starShips, planets, stations} from './Game.js';
             starShips.forEach(ship => ship.stop());
             setTimeout(()=>{
+                const spaceStation = stations[0];
                 starShips.forEach(ship => ship.resume());
                 ${userCode}
-            },300)
+            },500)
             `;
             document.body.appendChild(nSr)
         }

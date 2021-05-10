@@ -1,7 +1,7 @@
-import Random from "./Random.js";
-import GameEvent from "./GameEvent.js";
+import Random from "../Helpers/Random.js";
+import GameEvent from "../Helpers/GameEvent.js";
 import Ship from "./Ship.js";
-import Helper from "./Helper.js";
+import Helper from "../Helpers/Helper.js";
 export default class SpaceStation{
     #resources;
     #fuelTank;
@@ -13,7 +13,8 @@ export default class SpaceStation{
     #level=0;
     #shield;
     #impactCounter;
-    constructor() {
+    constructor(phaserGame) {
+        this.phaserGame = phaserGame;
         const rnd = new Random();
         this.#coords = [rnd.rnd(30,60),rnd.rnd(30,60)];
         this.#fuelTank = 1000;
@@ -60,7 +61,7 @@ export default class SpaceStation{
             this.#level = total - this.#lastTotal;
             this.#lastTotal = total;
         },60000)
-        this.init();
+        this.init(phaserGame);
     }
     getLevel(){
         return this.#level;
@@ -92,24 +93,25 @@ export default class SpaceStation{
         }
         return Math.log2(this.#impactCounter/3) * 3000;
     }
-    init(){
+    init(phaserGame){
         if(this.hud){
             return;
         }
-        this.stationElement = document.createElement('div');
+        this.stationElement = phaserGame.createStation(...this.#coords)
+       /* this.stationElement = document.createElement('div');
         this.stationElement.className = 'position-absolute station healthy';
         this.stationElement.appendChild(document.createElement('div'))
         this.stationElement.style.left = this.#coords[0]+'%';
-        this.stationElement.style.top = this.#coords[1]+'%';
+        this.stationElement.style.top = this.#coords[1]+'%';*/
     }
     cheat(){
         if(location.hostname === "localhost"){
-            this.#modules.cargoModule = 50;
-            this.#modules.beamerModule = 50;
-            this.#resources.o3 = 100000;
-            this.#resources.iron = 100000;
-            this.#resources.water = 100000;
-            this.#fuelTank = 100000;
+            this.#modules.cargoModule = 5000;
+            this.#modules.beamerModule = 5000;
+            this.#resources.o3 = 1000000;
+            this.#resources.iron = 1000000;
+            this.#resources.water = 1000000;
+            this.#fuelTank = 1000000;
         }
     }
     receiveRadiation(amount){
@@ -118,6 +120,7 @@ export default class SpaceStation{
         }
         if(this.#level>2500){
             const impact = Math.abs(Number(amount));
+            this.stationElement.shield.decrease(impact)
             this.#shield = this.#shield - (impact * Math.log(this.#impactCounter));
             this.#impactCounter++;
         }
@@ -133,9 +136,11 @@ export default class SpaceStation{
             this.#resources.water -= cost;
             setTimeout(()=>{
                 this.#shield++;
+
                 if(this.#shield>100){
                     this.#shield = 100;
                 }
+                this.stationElement.shield.setTo(this.#shield)
                 resolve('cooled')
             }, cost);
 
@@ -163,11 +168,15 @@ export default class SpaceStation{
     }
     registerListener(elem){
         this.hud = elem;
-        this.stationElement.addEventListener('click',ev =>{
+        this.stationElement.on('pointerdown', ()=>{
+            const dispatch = new GameEvent('station', this);
+            elem.dispatchEvent(dispatch)
+        })
+       /* this.stationElement.addEventListener('click',ev =>{
             const dispatch = new GameEvent('station', this);
             elem.dispatchEvent(dispatch)
 
-        })
+        })*/
     }
     acceptCargo(ship){
         return new Promise(((resolve, reject) => {
@@ -219,7 +228,7 @@ export default class SpaceStation{
                 this.#resources.o3 -= 500;
                 this.#resources.water -= 1000;
                 this.#resources.iron -= 5000;
-                const newShip = new Ship(this);
+                const newShip = new Ship(this.phaserGame, this);
                 const dispatch = new GameEvent('newShip',newShip);
                 this.events.builtShip(newShip);
                 this.hud.dispatchEvent(dispatch);

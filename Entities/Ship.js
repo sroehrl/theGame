@@ -1,7 +1,7 @@
-import GameEvent from "./GameEvent.js";
-import Helper from "./Helper.js";
-import AudioFx from "./AudioFx.js";
-import Random from "./Random.js";
+import GameEvent from "../Helpers/GameEvent.js";
+import Helper from "../Helpers/Helper.js";
+import AudioFx from "../Helpers/AudioFx.js";
+import Random from "../Helpers/Random.js";
 export default class Ship{
     #fuel = 500;
     #cargo;
@@ -12,7 +12,9 @@ export default class Ship{
     #moveStepper = 0;
     #beamStrength = 1;
     #spaceStation;
-    constructor(spaceStation, first=false, mode = 'default') {
+    #phaserGame;
+    constructor(phaserGame, spaceStation, first=false, mode = 'default') {
+        this.#phaserGame = phaserGame;
         this.#spaceStation = spaceStation;
         this.#stopped = false;
         this.#burnRate = 1;
@@ -41,7 +43,7 @@ export default class Ship{
             isMining: function(){}
         };
 
-        this.init(this.mode);
+        this.init(phaserGame);
     }
     setBurnRate(to){
         if( isNaN(to) || to < 1){
@@ -103,28 +105,12 @@ export default class Ship{
             this.#fuel += addAmount;
         }
     }
-    init(mode = 'default'){
-        this.mode = mode;
-        if(!this.shipElement){
-            this.shipElement = document.createElement('div');
-        }
-        switch(mode){
-            case 'bar':
-                this.shipElement.className = 'position-absolute bar';
-                this.shipElement.style.top = 'calc(var(--barWidth) * ' + (this.#spaceStation.getStats().shipsBuilt/100) + ')';
-                this.shipElement.style.left = 'calc(var(--barWidth) * ' + this.#spaceStation.getStats().shipsBuilt + ')';
-                break;
-            case 'dot':
-                this.shipElement.className = 'position-absolute dot';
-                break;
-            default:
-                this.shipElement.className = 'position-absolute ship';
-        }
-
+    init(phaserGame){
+        this.shipElement = phaserGame.createShip(...this.#spaceStation.getCoords())
         this.updatePosition();
     }
     registerListener(elem){
-        this.shipElement.addEventListener('click',ev =>{
+        this.shipElement.on('pointerdown',ev =>{
             const dispatch = new GameEvent('ship', this);
             elem.dispatchEvent(dispatch)
         })
@@ -136,10 +122,11 @@ export default class Ship{
         this.activity = 'extracting';
         this.audioFxBeam.play();
         this.events.isMining(this);
-
+        this.shipElement.play('beam')
         return planet.mineMe(this).finally(()=>{
             this.activity = 'idle';
             this.audioFxBeam.player.stop()
+            this.shipElement.playReverse('beam')
         })
     }
     unload(entity){
@@ -168,9 +155,36 @@ export default class Ship{
 
         this.activity = 'flying';
         this.audioFxFly.play(0.3);
-        this.animate('beam');
 
-        if(this.#fuel <= this.#burnRate){
+        let distance = Helper.distance(this.#position, this.destination)
+        const fuelRequirement = distance * (Math.log(this.#burnRate)+1);
+        if(fuelRequirement > this.#fuel){
+            // movable distance
+            console.log({
+                distance:distance,
+                fuel:this.#fuel,
+                fuelRequirement,
+                burnRate:this.#burnRate,
+                destination:this.destination
+            })
+            this.setDestination(...Helper.achievableDestination(this.#position, this.destination,this.#fuel/fuelRequirement))
+
+            this.#fuel = 0;
+            distance = Helper.distance(this.#position, this.destination)
+        } else {
+            this.#fuel -= fuelRequirement;
+
+        }
+
+
+        this.#phaserGame.move(this.shipElement,this.destination,distance*100/moveAmount,res=>{
+            this.#position = this.destination;
+            this.events.arrived(this);
+            this.events.idle(this);
+        });
+
+
+      /*  if(this.#fuel <= this.#burnRate){
             this.activity = 'idle';
             alert(this.name + ' is out of fuel!');
             return;
@@ -203,11 +217,10 @@ export default class Ship{
         } else {
             this.#moveStepper = 0;
             this.activity = 'idle';
-            this.animate('idle')
 
             this.events.idle(this);
             this.events.arrived(this);
-        }
+        }*/
     }
 
     on(name, cb){
@@ -225,18 +238,7 @@ export default class Ship{
             this.activity = 'idle';
         });
     }
-    animate(change){
-        if(this.mode === 'default'){
-            switch (change){
-                case 'idle':
-                    this.shipElement.classList.add('beam');
-                    break;
-                case 'beam':
-                    this.shipElement.classList.remove('beam');
-                    break;
-            }
-        }
-    }
+
     refuelRequest(ship){
         return new Promise((resolve, reject) => {
             const amount = this.#fuel / 2;
@@ -272,13 +274,8 @@ export default class Ship{
         }))
     }
     updatePosition(){
-        if(this.mode === 'default' || this.mode === 'dot'){
-            this.shipElement.style.left = this.#position[0] + '%';
-            this.shipElement.style.top = this.#position[1] + '%';
-        }
+        this.#phaserGame.move(this.shipElement,this.#position,300,res=>{
+            // console.log(this.#position)
+        });
     }
-    bind(){
-        return this.shipElement;
-    }
-
 }

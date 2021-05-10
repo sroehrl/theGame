@@ -1,20 +1,16 @@
-import GameEvent from "./GameEvent.js";
-import Random from "./Random.js";
-import Helper from "./Helper.js";
+import GameEvent from "../Helpers/GameEvent.js";
+import Random from "../Helpers/Random.js";
+import Helper from "../Helpers/Helper.js";
 export default class Planet{
     #coords;
     #type;
     #pressure;
-    constructor(position, type = 'water') {
+    constructor(phaserGame, position, type = 'water') {
         const rand = new Random();
         this.#type = type;
-        this.#pressure = rand.rnd(10000, 500000);
+        this.#pressure = rand.rnd(10000, 400000);
         this.#coords = position;
-        this.element = document.createElement('div');
-        this.element.innerHTML = '<div class="wrap"><div class="background"></div><div class="clouds"></div></div><div class="mask"></div>'
-        this.element.style.left = position[0]+'%';
-        this.element.style.top = position[1]+'%';
-        this.element.className = `position-absolute planet ${this.#type}`;
+        this.element = phaserGame.createPlanet(...this.#coords, type)
         this.events = {
             click: function (){},
             cargoAccepted: function (){},
@@ -45,7 +41,7 @@ export default class Planet{
 
     }
     registerListener(elem){
-        this.element.addEventListener('click',ev =>{
+        this.element.on('pointerdown',ev =>{
             const dispatch = new GameEvent('planet', this);
             elem.dispatchEvent(dispatch)
         })

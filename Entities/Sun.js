@@ -1,16 +1,13 @@
-import GameEvent from "./GameEvent.js";
+import GameEvent from "../Helpers/GameEvent.js";
 
 export default class Sun{
     #intensity;
     #position;
     #spaceStation;
-    constructor(position, spaceStation) {
-        this.#intensity = 0.01;
+    constructor(phaserGame, position, spaceStation) {
+        this.#intensity = 33.01;
         this.#spaceStation = spaceStation;
-        this.element = document.createElement('div');
-        this.element.className = 'position-absolute sun';
-        this.element.style.left = position[0]+'%';
-        this.element.style.top = position[1]+'%';
+        this.element = phaserGame.createSun(...position)
         this.#position = position;
         this.init()
     }
@@ -29,7 +26,7 @@ export default class Sun{
     }
 
     registerListener(elem) {
-        this.element.addEventListener('click',ev =>{
+        this.element.on('pointerdown',ev =>{
             const dispatch = new GameEvent('sun', this);
             elem.dispatchEvent(dispatch)
         })
