@@ -5,7 +5,7 @@ export default class Sun{
     #position;
     #spaceStation;
     constructor(phaserGame, position, spaceStation) {
-        this.#intensity = 33.01;
+        this.#intensity = 0.01;
         this.#spaceStation = spaceStation;
         this.element = phaserGame.createSun(...position)
         this.#position = position;
