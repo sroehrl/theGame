@@ -42,7 +42,6 @@ export default class Ship{
             cargoAccepted: function (){},
             isMining: function(){}
         };
-
         this.init(phaserGame);
     }
     setBurnRate(to){
@@ -183,44 +182,6 @@ export default class Ship{
             this.events.idle(this);
         });
 
-
-      /*  if(this.#fuel <= this.#burnRate){
-            this.activity = 'idle';
-            alert(this.name + ' is out of fuel!');
-            return;
-        }
-        this.#fuel-= this.#burnRate+this.#moveStepper;
-        this.#moveStepper++;
-        let futurePos = [this.#position[0], this.#position[1]];
-        let isMoving = [true,true];
-        for(let i = 0; i<2; i++){
-
-            if(Math.abs(this.#position[i]-this.destination[i])>moveAmount){
-                if(futurePos[i] > this.destination[i]){
-                    futurePos[i] -= moveAmount;
-                } else {
-                    futurePos[i] += moveAmount;
-                }
-            } else {
-                futurePos[i] = this.destination[i];
-                isMoving[i] = false;
-            }
-        }
-        this.#position = futurePos;
-        this.updatePosition()
-
-        if(isMoving[0] || isMoving[1]){
-            setTimeout(()=>{
-                this.#moveStepper = this.#moveStepper > 1 ? this.#moveStepper+1 : 0;
-                this.fly()
-            },300);
-        } else {
-            this.#moveStepper = 0;
-            this.activity = 'idle';
-
-            this.events.idle(this);
-            this.events.arrived(this);
-        }*/
     }
 
     on(name, cb){
@@ -257,12 +218,13 @@ export default class Ship{
         return new Promise(((resolve, reject) => {
             setTimeout(()=>{
                 this.activity = 'idle';
-                const mySpace = 500 - this.#cargo.amount;
-                if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1 || (this.#cargo.type && this.#cargo.type !== ship.getCargo().type)){
+                const mySpace = this.#capacity - this.#cargo.amount;
+                if(!Helper.proximity(ship,this) || ship.getCargo().amount < 1 || (this.#cargo.type !== null && this.#cargo.type !== ship.getCargo().type)){
                     reject(false);
                 }
+                this.#cargo.type = ship.getCargo().type;
                 if(mySpace < ship.getCargo().amount){
-                    this.#cargo.amount = 500;
+                    this.#cargo.amount = this.#capacity;
                 } else {
                     this.#cargo.amount += ship.getCargo().amount;
                 }

@@ -57,9 +57,9 @@ function loadAssets (){
     this.load.image('station', './assets/space-station.png');
     this.load.spritesheet('sun', './assets/sun.png', {frameWidth: 426, frameHeight: 426});
     this.load.spritesheet('ufoAnimated', './assets/ufo-sprite.png', {frameWidth: 150, frameHeight: 100})
-    this.load.spritesheet('planet-iron', './assets/planet-iron.png', {frameWidth: 300, frameHeight: 284});
-    this.load.spritesheet('planet-o3', './assets/planet-o3.png', {frameWidth: 300, frameHeight: 284});
-    this.load.spritesheet('planet-water', './assets/planet-water.png', {frameWidth: 300, frameHeight: 284});
+    this.load.spritesheet('planet-iron', './assets/planet-iron.png', {frameWidth: 500, frameHeight: 500});
+    this.load.spritesheet('planet-o3', './assets/planet-o3.png', {frameWidth: 500, frameHeight: 500});
+    this.load.spritesheet('planet-water', './assets/planet-water.png', {frameWidth: 500, frameHeight: 500});
 }
 
 function create(){
@@ -76,7 +76,7 @@ function create(){
         this.anims.create({
             key: 'planet-'+type,
             frames: this.anims.generateFrameNumbers('planet-'+type),
-            frameRate: 8,
+            frameRate: Math.floor(Math.random() * 29) + 18,
             repeat: -1
         })
     })
@@ -104,7 +104,7 @@ const config = (ele)=> ({
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    // pixelArt: true,
+    pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {

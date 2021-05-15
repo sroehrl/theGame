@@ -45,9 +45,9 @@ export default class SpaceStation{
             }
         }
         this.#resources = {
-            iron: 100,
-            o3:321,
-            water:210
+            iron: 1000,
+            o3:3201,
+            water:2100
         }
         this.events = {
             cargoAccepted: function (){},

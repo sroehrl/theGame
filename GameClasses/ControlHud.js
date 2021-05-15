@@ -41,17 +41,13 @@ export default function (controlElement, detail, entity){
             const totalResources = detail.getStats().o3Mined + detail.getStats().waterMined + detail.getStats().ironMined;
             controlElement.innerHTML = `
                     <h3>Space Station</h3>
-                    ${detail.getShield() < 100 ? (
-                `<div class="p-2 b-rounded b-white b-1">
-                            <p>Shield: ${detail.getShield().toFixed(1)}%</p>
-                            <progress value="${detail.getShield()}" max="100"></progress>
-                            <p>Water to cool 1%: ${numeral(detail.getCoolingCost()).format('000.0a')}</p>
-                        </div>`
-            ) : ''}
-                    
-                    
-                    <p class="font-strong">FuelTank: ${numeral(detail.getFuelTank()).format('00.00a')}</p>
-                    <p>Coordinates: ${detail.getCoords()[0]} | ${detail.getCoords()[1]}</p>
+                    <div class="grid-6-6">
+                        <p class="font-strong">FuelTank: ${numeral(detail.getFuelTank()).format('00.00a')}</p>
+                        <p>Resources mined: ${numeral(totalResources).format('000.0a')}</p>
+                        <p>Coordinates: ${detail.getCoords()[0]} | ${detail.getCoords()[1]}</p>
+                        <h4>Resources/min: ${numeral(detail.getLevel()).format('000.00a')}</h4>
+                    </div>
+                    <h3>Resources</h3>
                     <div class="m-1 p-3 b-2 b-primary b-rounded-2">
                         <div class="grid-6-6">
                             <p>Water</p>
@@ -61,12 +57,17 @@ export default function (controlElement, detail, entity){
                             <p>O3</p>
                             <p>${numeral(detail.getResources().o3).format('000.0a')}</p>
                         </div>
-                        <p>Beamer Modules:${detail.getModules().beamerModule}</p>
-                        <p>Cargo Modules:${detail.getModules().cargoModule}</p>
+                       
                     </div>
-                    <p>Resources mined: ${numeral(totalResources).format('000.0a')}</p>
+                    <h3>Modules</h3>
+                   <div class="m-1 p-3 b-2 b-primary b-rounded-2">  
+                        <div class="grid-6-6">
+                             <p>Beamer Modules</p><p>${detail.getModules().beamerModule}</p>
+                            <p>Cargo Modules</p><p>${detail.getModules().cargoModule}</p>
+                        </div>
+                       
+                    </div>
                     <p>Ships built: ${detail.getStats().shipsBuilt}</p>
-                    <h4>Level: <br> ${numeral(detail.getLevel()).format('000.00a')} resources/min</h4>
                     `;
             break;
         default:
