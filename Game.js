@@ -48,9 +48,17 @@ class Game {
             } else if(total > 500000){
                 this.sun.addIntensity(.1)
             } else if(total > 150000){
-                this.sun.addIntensity(.01)
+                this.sun.addIntensity(.02)
             }
             if(this.spaceStation.getShield()<0.1 && gameRunning){
+                gameRunning = false;
+                window.location.href = 'game-over.html'
+            }
+            let fuelLeft = 0;
+            this.ships.forEach(ship =>{
+                fuelLeft += ship.getFuel()
+            })
+            if(fuelLeft<1){
                 gameRunning = false;
                 window.location.href = 'game-over.html'
             }
@@ -61,6 +69,9 @@ class Game {
         if (this.planets.length > 0) {
             return;
         }
+        this.sun = new Sun(phaserGame,[10,17], this.spaceStation);
+        this.sun.registerListener(this.control);
+
         ['water', 'iron', 'o3'].forEach(type => {
             const planet = new Planet(phaserGame, this.random.planetPosition(), type);
             planet.registerListener(this.control)
@@ -72,8 +83,6 @@ class Game {
         this.registerShip(new Ship(phaserGame, this.spaceStation, true))
         delete localStorage.lastRun;
 
-        this.sun = new Sun(phaserGame,[10,17], this.spaceStation);
-        this.sun.registerListener(this.control);
 
         this.spaceStation.registerListener(this.control);
 
